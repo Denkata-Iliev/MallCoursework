@@ -33,6 +33,10 @@ public class User {
 
     @Column(nullable = false, unique = true)
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-    @Size(min = 10, max = 10, message = Constants.PHONE_LENGTH)
+    @Size(min = 10, max = 10, message = Constants.PHONE_ERROR)
     private String phone;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

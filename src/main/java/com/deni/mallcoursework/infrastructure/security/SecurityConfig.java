@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     private static final String KEY = "myKey";
 
@@ -31,8 +33,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                         auth
-                            .requestMatchers("/special").authenticated()
-                            .anyRequest().permitAll())
+                            .requestMatchers("/register", "/login", "/css/**").permitAll()
+                            .anyRequest().authenticated()
+                )
                 .formLogin(customizer -> {
                     customizer.loginPage("/login");
                     customizer.usernameParameter("email");
