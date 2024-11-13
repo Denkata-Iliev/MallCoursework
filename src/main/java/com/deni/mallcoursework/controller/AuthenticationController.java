@@ -1,11 +1,9 @@
 package com.deni.mallcoursework.controller;
 
 import com.deni.mallcoursework.domain.account.dto.RegisterDto;
-import com.deni.mallcoursework.domain.account.entity.User;
-import com.deni.mallcoursework.domain.account.repository.UserRepository;
+import com.deni.mallcoursework.domain.account.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,13 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class AuthenticationController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @Autowired
-    public AuthenticationController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AuthenticationController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/register")
@@ -32,17 +28,17 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public String register(@Valid RegisterDto registerDto, BindingResult bindingResult, Model model) {
+
+        try {
+            userService.register(registerDto);
+        } catch (RuntimeException e) {
+            bindingResult.rejectValue("email", "error.registerDto", e.getMessage());
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("registerDto", registerDto);
             return "register";
         }
-
-        var user = new User();
-        user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setFullname(registerDto.getFullname());
-        user.setPhone(registerDto.getPhone());
-        userRepository.save(user);
 
         return "redirect:/login";
     }

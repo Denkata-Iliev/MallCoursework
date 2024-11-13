@@ -26,7 +26,9 @@ public class MallUserDetailsService implements UserDetailsService {
         return new MallUserDetails(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                Collections.singletonList(
+                        new SimpleGrantedAuthority("ROLE_" + user.getRole())
+                )
         );
     }
 }
