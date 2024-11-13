@@ -3,6 +3,7 @@ package com.deni.mallcoursework.domain.account.dto;
 import com.deni.mallcoursework.util.Constants;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +24,7 @@ public final class RegisterDto {
         private String email;
 
         @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-        @Size(min = 10, max = 10, message = Constants.PHONE_LENGTH)
+        @Pattern(regexp = "^\\d{10}$", message = Constants.PHONE_ERROR)
         private String phone;
 
 }
