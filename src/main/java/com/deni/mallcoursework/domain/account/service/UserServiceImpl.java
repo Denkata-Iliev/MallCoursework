@@ -4,6 +4,7 @@ import com.deni.mallcoursework.domain.account.mapper.UserMapper;
 import com.deni.mallcoursework.domain.account.dto.RegisterDto;
 import com.deni.mallcoursework.domain.account.entity.Role;
 import com.deni.mallcoursework.domain.account.repository.UserRepository;
+import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,11 @@ public class UserServiceImpl implements UserService {
     public void register(RegisterDto registerDto) {
         var user = userMapper.fromRegisterDto(registerDto);
         if (repository.existsByEmail(registerDto.getEmail())) {
-            throw new RuntimeException("Email address already in use");
+            throw new ConflictException("email");
+        }
+
+        if (repository.existsByPhone(registerDto.getPhone())) {
+            throw new ConflictException("phone");
         }
 
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
