@@ -33,20 +33,22 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                         auth
-                            .requestMatchers("/register", "/login", "/css/**").permitAll()
+                            .requestMatchers("/", "/register", "/login", "/css/**").permitAll()
                             .anyRequest().authenticated()
                 )
-                .formLogin(customizer -> {
-                    customizer.loginPage("/login");
-                    customizer.usernameParameter("email");
+                .formLogin(configurer -> {
+                    configurer.loginPage("/login");
+                    configurer.usernameParameter("email");
                 })
-                .logout(c -> {
-                    c.logoutUrl("/logout");
-                    c.logoutSuccessUrl("/login");
-                    c.clearAuthentication(true);
-                    c.invalidateHttpSession(true);
+                .logout(configurer -> {
+                    configurer.logoutUrl("/logout");
+                    configurer.logoutSuccessUrl("/login");
+                    configurer.clearAuthentication(true);
+                    configurer.invalidateHttpSession(true);
                 })
-                .rememberMe(rememberConf -> rememberConf.rememberMeServices(getRememberMeServices(userDetailsService)));
+                .rememberMe(rememberConf ->
+                        rememberConf.rememberMeServices(getRememberMeServices(userDetailsService))
+                );
         return http.build();
     }
 
@@ -62,11 +64,6 @@ public class SecurityConfig {
 
     @Bean
     RememberMeServices getRememberMeServices(UserDetailsService userDetailsService) {
-        TokenBasedRememberMeServices rememberMe = new TokenBasedRememberMeServices(
-                KEY,
-                userDetailsService,
-                TokenBasedRememberMeServices.RememberMeTokenAlgorithm.MD5);
-        rememberMe.setMatchingAlgorithm(TokenBasedRememberMeServices.RememberMeTokenAlgorithm.MD5);
-        return rememberMe;
+        return new TokenBasedRememberMeServices(KEY, userDetailsService);
     }
 }
