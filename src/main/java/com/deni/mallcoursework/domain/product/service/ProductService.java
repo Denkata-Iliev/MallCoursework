@@ -11,4 +11,8 @@ public interface ProductService {
     Page<DisplayProductDto> getAll(Pageable pageable);
 
     DisplayProductDto getById(String id);
+
+    CreateProductDto getCreateDtoById(String id);
+
+    void update(CreateProductDto createDto, String id);
 }

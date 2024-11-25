@@ -53,7 +53,7 @@ public class ProductsController {
     }
 
     @GetMapping("/create")
-    public String upload(CreateProductDto createProductDto) {
+    public String create(CreateProductDto createProductDto) {
         return "products/create";
     }
 
@@ -65,6 +65,34 @@ public class ProductsController {
         }
 
         productService.create(createProductDto);
+        return "redirect:/products";
+    }
+
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable String id, Model model) {
+        var createProductDto = productService.getCreateDtoById(id);
+        model.addAttribute("createProductDto", createProductDto);
+        return "products/update";
+    }
+
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable String id,
+                         @Valid CreateProductDto createProductDto,
+                         BindingResult bindingResult,
+                         RedirectAttributes redirectAttributes,
+                         Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("createProductDto", createProductDto);
+            return "products/update";
+        }
+
+        try {
+            productService.update(createProductDto, id);
+        } catch (ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/product/update/" + id;
+        }
+
         return "redirect:/products";
     }
 }
