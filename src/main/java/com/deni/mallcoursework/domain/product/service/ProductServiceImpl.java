@@ -2,9 +2,12 @@ package com.deni.mallcoursework.domain.product.service;
 
 import com.cloudinary.Cloudinary;
 import com.deni.mallcoursework.domain.product.dto.CreateProductDto;
+import com.deni.mallcoursework.domain.product.dto.DisplayProductDto;
 import com.deni.mallcoursework.domain.product.mapper.ProductMapper;
 import com.deni.mallcoursework.domain.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -43,5 +46,11 @@ public class ProductServiceImpl implements ProductService {
         }
 
         productRepository.save(product);
+    }
+
+    @Override
+    public Page<DisplayProductDto> getAll(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(mapper::toDisplayProductDto);
     }
 }
