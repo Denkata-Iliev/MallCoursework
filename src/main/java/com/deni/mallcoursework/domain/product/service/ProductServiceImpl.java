@@ -5,6 +5,7 @@ import com.deni.mallcoursework.domain.product.dto.CreateProductDto;
 import com.deni.mallcoursework.domain.product.dto.DisplayProductDto;
 import com.deni.mallcoursework.domain.product.mapper.ProductMapper;
 import com.deni.mallcoursework.domain.product.repository.ProductRepository;
+import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,5 +53,13 @@ public class ProductServiceImpl implements ProductService {
     public Page<DisplayProductDto> getAll(Pageable pageable) {
         return productRepository.findAll(pageable)
                 .map(mapper::toDisplayProductDto);
+    }
+
+    @Override
+    public DisplayProductDto getById(String id) {
+        var product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id"));
+
+        return mapper.toDisplayProductDto(product);
     }
 }

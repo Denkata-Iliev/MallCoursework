@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{ base :: base_head(~{::title}, ~{}) }">
+    <title>Product Details</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <img th:src="${product.imageUrl}" class="img-fluid" alt="Product Image">
+        </div>
+
+        <div class="col-md-6">
+            <h1 th:text="${product.name}"></h1>
+            <p class="lead">$<span th:text="${product.price}"></span></p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere.</p>
+            <a href="/products" class="btn btn-primary">Back to Products</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public final class DisplayProductDto {
+    private String id;
     private String name;
     private BigDecimal price;
     private String imageUrl;

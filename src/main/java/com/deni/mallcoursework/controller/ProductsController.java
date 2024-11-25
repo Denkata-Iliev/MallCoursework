@@ -1,7 +1,9 @@
 package com.deni.mallcoursework.controller;
 
 import com.deni.mallcoursework.domain.product.dto.CreateProductDto;
+import com.deni.mallcoursework.domain.product.dto.DisplayProductDto;
 import com.deni.mallcoursework.domain.product.service.ProductService;
+import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -9,10 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/products")
@@ -37,6 +37,21 @@ public class ProductsController {
         return "products/index";
     }
 
+    @GetMapping("/{id}")
+    public String getById(@PathVariable String id, RedirectAttributes redirectAttributes, Model model) {
+        DisplayProductDto productDto;
+
+        try {
+            productDto = productService.getById(id);
+        } catch (ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/products";
+        }
+
+        model.addAttribute("product", productDto);
+        return "products/details";
+    }
+
     @GetMapping("/create")
     public String upload(CreateProductDto createProductDto) {
         return "products/create";
@@ -50,6 +65,6 @@ public class ProductsController {
         }
 
         productService.create(createProductDto);
-        return "redirect:/";
+        return "redirect:/products";
     }
 }

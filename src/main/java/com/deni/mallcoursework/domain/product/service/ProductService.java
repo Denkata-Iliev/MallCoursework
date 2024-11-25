@@ -9,4 +9,6 @@ public interface ProductService {
     void create(CreateProductDto createDto);
 
     Page<DisplayProductDto> getAll(Pageable pageable);
+
+    DisplayProductDto getById(String id);
 }
