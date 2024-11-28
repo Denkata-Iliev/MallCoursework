@@ -128,7 +128,6 @@ public class ProductServiceImpl implements ProductService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private String getPublicId(String imageUrl) {

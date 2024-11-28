@@ -19,6 +19,10 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 @EnableMethodSecurity
 public class SecurityConfig {
     private static final String KEY = "myKey";
+    private static final String[] ALLOW_ANONYMOUS_LIST = {
+            "/", "/register", "/login", "/css/**", "/js/**", "/bootstrap/css/**", "/bootstrap/js/**",
+            "/products", "/products/{id}"
+    };
 
     private final RememberMeServices rememberMeServices;
 
@@ -32,7 +36,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                         auth
-                            .requestMatchers("/", "/register", "/login", "/css/**", "/js/**").permitAll()
+                            .requestMatchers(ALLOW_ANONYMOUS_LIST).permitAll()
                             .anyRequest().authenticated()
                 )
                 .formLogin(configurer -> {
@@ -48,6 +52,7 @@ public class SecurityConfig {
                 .rememberMe(rememberConf ->
                         rememberConf.rememberMeServices(rememberMeServices)
                 );
+
         return http.build();
     }
 

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/products")
 public class ProductsController {
+    private static final String IS_ADMIN_MANAGER_OR_EMPLOYEE = "hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')";
     private final ProductService productService;
 
     @Autowired
@@ -52,11 +54,13 @@ public class ProductsController {
         return "products/details";
     }
 
+    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
     @GetMapping("/create")
     public String create(CreateProductDto createProductDto) {
         return "products/create";
     }
 
+    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
     @PostMapping("/create")
     public String create(@Valid CreateProductDto createProductDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -68,6 +72,7 @@ public class ProductsController {
         return "redirect:/products";
     }
 
+    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         var createProductDto = productService.getCreateDtoById(id);
@@ -75,6 +80,7 @@ public class ProductsController {
         return "products/update";
     }
 
+    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateProductDto createProductDto,
@@ -96,12 +102,13 @@ public class ProductsController {
         return "redirect:/products";
     }
 
+    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable String id, Model model) {
+    public String delete(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
             productService.delete(id);
-        } catch (ResourceNotFoundException e) {
-            model.addAttribute("error", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
         return "redirect:/products";
