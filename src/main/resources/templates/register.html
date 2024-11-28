@@ -8,7 +8,7 @@
     <div class="container card-container">
         <div class="card">
             <h2 class="text-center mb-4">Register</h2>
-            <form action="#" th:action="@{/register}" th:object="${registerDto}" method="POST">
+            <form th:action="@{/register}" th:object="${registerDto}" method="POST">
 
                 <div class="mb-3">
                     <label for="fullname" class="form-label">Full Name</label>

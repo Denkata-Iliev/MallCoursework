@@ -14,7 +14,7 @@
             <h1 th:text="${product.name}"></h1>
             <p class="lead">$<span th:text="${product.price}"></span></p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere.</p>
-            <a href="/products" class="btn btn-primary">Back to Products</a>
+            <a th:href="@{/products}" class="btn btn-primary">Back to Products</a>
         </div>
     </div>
 </div>
