@@ -27,6 +27,8 @@ public class Product {
     @Positive(message = Constants.PRICE_MUST_BE_POSITIVE)
     private BigDecimal price;
 
+    private String description;
+
     @Column(name = "img_url")
     private String imageUrl;
 }

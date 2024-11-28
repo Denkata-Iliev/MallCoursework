@@ -24,6 +24,11 @@
             </div>
 
             <div class="mb-3">
+                <label for="description">Description:</label>
+                <textarea th:field="*{description}" id="description" class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3">
                 <label class="form-label">Image:</label>
                 <div id="drop-area">Drag'n'drop or click in the area to browse</div>
                 <input type="file" th:field="*{imageFile}" hidden id="file-input" accept="image/*" aria-describedby="img-help"/>

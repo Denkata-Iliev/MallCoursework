@@ -22,5 +22,7 @@ public final class CreateProductDto {
     @Positive(message = Constants.PRICE_MUST_BE_POSITIVE)
     private BigDecimal price;
 
+    private String description;
+
     private MultipartFile imageFile;
 }
