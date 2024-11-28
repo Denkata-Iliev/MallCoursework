@@ -3,7 +3,6 @@ package com.deni.mallcoursework.domain.product.service;
 import com.cloudinary.Cloudinary;
 import com.deni.mallcoursework.domain.product.dto.CreateProductDto;
 import com.deni.mallcoursework.domain.product.dto.DisplayProductDto;
-import com.deni.mallcoursework.domain.product.entity.Product;
 import com.deni.mallcoursework.domain.product.mapper.ProductMapper;
 import com.deni.mallcoursework.domain.product.repository.ProductRepository;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -110,6 +110,25 @@ public class ProductServiceImpl implements ProductService {
         }
 
         productRepository.save(product);
+    }
+
+    @Override
+    public void delete(String id) {
+        var product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+
+        productRepository.deleteById(id);
+        try {
+            var imageUrl = product.getImageUrl();
+            if (StringUtils.isEmptyOrWhitespace(imageUrl)) {
+                return;
+            }
+
+            cloudinary.uploader().destroy(getPublicId(imageUrl), Map.of());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private String getPublicId(String imageUrl) {

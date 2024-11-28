@@ -95,4 +95,15 @@ public class ProductsController {
 
         return "redirect:/products";
     }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable String id, Model model) {
+        try {
+            productService.delete(id);
+        } catch (ResourceNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/products";
+    }
 }
