@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/reg-login.css">
+<head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/center-card.css">
 </head>
 <body>
-<div class="container registration-container">
-    <div class="registration-card">
+<div class="container card-container">
+    <div class="card">
         <h2 class="text-center mb-4">Login</h2>
-        <form action="#" th:action="@{/login}" method="POST">
+        <form th:action="@{/login}" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" required>

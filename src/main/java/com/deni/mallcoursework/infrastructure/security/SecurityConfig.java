@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,12 +19,16 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 @EnableMethodSecurity
 public class SecurityConfig {
     private static final String KEY = "myKey";
+    private static final String[] ALLOW_ANONYMOUS_LIST = {
+            "/", "/register", "/login", "/css/**", "/js/**", "/bootstrap/css/**", "/bootstrap/js/**",
+            "/products", "/products/{id}"
+    };
 
-    private final MallUserDetailsService userDetailsService;
+    private final RememberMeServices rememberMeServices;
 
     @Autowired
     public SecurityConfig(MallUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+        rememberMeServices = new TokenBasedRememberMeServices(KEY, userDetailsService);
     }
 
     @Bean
@@ -33,7 +36,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                         auth
-                            .requestMatchers("/", "/register", "/login", "/css/**").permitAll()
+                            .requestMatchers(ALLOW_ANONYMOUS_LIST).permitAll()
                             .anyRequest().authenticated()
                 )
                 .formLogin(configurer -> {
@@ -47,8 +50,9 @@ public class SecurityConfig {
                     configurer.invalidateHttpSession(true);
                 })
                 .rememberMe(rememberConf ->
-                        rememberConf.rememberMeServices(getRememberMeServices(userDetailsService))
+                        rememberConf.rememberMeServices(rememberMeServices)
                 );
+
         return http.build();
     }
 
@@ -60,10 +64,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    RememberMeServices getRememberMeServices(UserDetailsService userDetailsService) {
-        return new TokenBasedRememberMeServices(KEY, userDetailsService);
     }
 }

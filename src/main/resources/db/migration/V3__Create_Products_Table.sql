@@ -1,0 +1,6 @@
+CREATE TABLE products(
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(12, 2) NOT NULL,
+    img_url VARCHAR(255)
+)

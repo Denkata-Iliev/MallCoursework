@@ -1,0 +1,11 @@
+#drop-area {
+    width: 100%;
+    text-align: center;
+    line-height: 200px;
+    border: 2px dashed #ccc;
+    cursor: pointer;
+}
+
+#drop-area.drag-over {
+    background-color: #eee;
+}

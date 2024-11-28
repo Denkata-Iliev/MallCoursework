@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="base_head(title, links)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">Mall Coursework</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <th:block th:replace="${links}" />
+</head>
+<body>
+
+</body>
+</html>
