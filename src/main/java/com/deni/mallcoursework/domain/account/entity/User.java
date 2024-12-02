@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.account.entity;
 
+import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.util.Constants;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -39,4 +40,8 @@ public class User {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private Store store;
 }

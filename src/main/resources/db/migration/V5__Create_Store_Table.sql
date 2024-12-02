@@ -1,0 +1,9 @@
+CREATE TABLE stores(
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    floor_number INT NOT NULL,
+    manager_id VARCHAR(255) NOT NULL UNIQUE,
+    CONSTRAINT FOREIGN KEY (manager_id) REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
