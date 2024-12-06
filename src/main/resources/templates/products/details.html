@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{ base :: base_head(~{::title}, ~{}) }">
     <title>Product Details</title>
 </head>
@@ -15,8 +15,22 @@
             <p class="lead">$<span th:text="${product.price}"></span></p>
             <p th:text="${product.description}"></p>
             <a th:href="@{/products}" class="btn btn-primary">Back to Products</a>
+
+            <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+               th:href="@{/products/update/{id}(id=${product.id})}" class="btn btn-outline-success">Update</a>
+
+            <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+                  th:action="@{/products/delete/{id}(id=${product.id})}"
+                  method="post"
+                  class="d-inline-block"
+                  onsubmit="return confirmDeletion('product')"
+            >
+                <button type="submit" class="btn btn-outline-danger">Delete</button>
+            </form>
         </div>
     </div>
 </div>
+
+<script src="/js/confirmDeletion.js"></script>
 </body>
 </html>

@@ -3,16 +3,15 @@ package com.deni.mallcoursework.controller;
 import com.deni.mallcoursework.domain.account.service.UserService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.service.StoreService;
+import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/stores")
@@ -36,6 +35,19 @@ public class StoresController {
         model.addAttribute("page", page);
 
         return "stores/index";
+    }
+
+    @GetMapping("/{id}")
+    public String getById(@PathVariable String id, RedirectAttributes redirectAttributes, Model model) {
+        try {
+            var store = storeService.getById(id);
+            model.addAttribute("store", store);
+
+            return "stores/details";
+        } catch (ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/stores";
+        }
     }
 
     @GetMapping("/create")

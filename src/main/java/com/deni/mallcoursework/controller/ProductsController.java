@@ -1,7 +1,6 @@
 package com.deni.mallcoursework.controller;
 
 import com.deni.mallcoursework.domain.product.dto.CreateProductDto;
-import com.deni.mallcoursework.domain.product.dto.DisplayProductDto;
 import com.deni.mallcoursework.domain.product.service.ProductService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
@@ -41,17 +40,15 @@ public class ProductsController {
 
     @GetMapping("/{id}")
     public String getById(@PathVariable String id, RedirectAttributes redirectAttributes, Model model) {
-        DisplayProductDto productDto;
-
         try {
-            productDto = productService.getById(id);
+            var displayProductDto = productService.getById(id);
+
+            model.addAttribute("product", displayProductDto);
+            return "products/details";
         } catch (ResourceNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/products";
         }
-
-        model.addAttribute("product", productDto);
-        return "products/details";
     }
 
     @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
