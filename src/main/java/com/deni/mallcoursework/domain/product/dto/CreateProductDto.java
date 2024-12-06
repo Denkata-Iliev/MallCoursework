@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public final class CreateProductDto {
-    private String id;
-
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
     private String name;
 

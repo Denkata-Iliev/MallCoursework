@@ -3,6 +3,7 @@ package com.deni.mallcoursework.domain.product.service;
 import com.cloudinary.Cloudinary;
 import com.deni.mallcoursework.domain.product.dto.CreateProductDto;
 import com.deni.mallcoursework.domain.product.dto.DisplayProductDto;
+import com.deni.mallcoursework.domain.product.entity.Product;
 import com.deni.mallcoursework.domain.product.mapper.ProductMapper;
 import com.deni.mallcoursework.domain.product.repository.ProductRepository;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
@@ -62,24 +63,21 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public DisplayProductDto getById(String id) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+        var product = getProductById(id);
 
         return mapper.toDisplayProductDto(product);
     }
 
     @Override
     public CreateProductDto getCreateDtoById(String id) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+        var product = getProductById(id);
 
         return mapper.toCreateProductDto(product);
     }
 
     @Override
     public void update(CreateProductDto createDto, String id) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+        var product = getProductById(id);
 
         mapper.update(createDto, product);
 
@@ -114,8 +112,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void delete(String id) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+        var product = getProductById(id);
 
         productRepository.deleteById(id);
         try {
@@ -128,6 +125,11 @@ public class ProductServiceImpl implements ProductService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Product getProductById(String id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
     }
 
     private String getPublicId(String imageUrl) {

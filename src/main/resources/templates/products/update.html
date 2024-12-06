@@ -11,7 +11,7 @@
     <h2 class="text-center mb-4">Update Product</h2>
     <p class="fs-5 text-danger text-center" th:if="${error}" th:text="${error}"></p>
 
-    <form th:action="@{/products/update/{id}(id=${createProductDto.id})}"
+    <form th:action="@{/products/update/{id}(id=${id})}"
           th:object="${createProductDto}" method="post" enctype="multipart/form-data">
 
       <div class="mb-3">
