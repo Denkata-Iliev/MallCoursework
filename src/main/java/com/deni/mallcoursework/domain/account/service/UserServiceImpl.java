@@ -53,8 +53,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<ManagerDto> getAllManagers() {
+    public List<ManagerDto> getAllManagers(String id) {
         var availableManagers = repository.findAllByRoleAndStoreIsNull(Role.MANAGER);
+
+        if (id != null) {
+            availableManagers.add(getUserById(id));
+        }
+
         return availableManagers
                 .stream()
                 .map(userMapper::toManagerDto)
