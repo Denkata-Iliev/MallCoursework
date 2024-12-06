@@ -29,15 +29,15 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public String register(@Valid RegisterDto registerDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("registerDto", registerDto);
+            return "register";
+        }
 
         try {
             userService.register(registerDto);
         } catch (ConflictException e) {
             bindingResult.rejectValue(e.getField(), "error.registerDto", e.getMessage());
-        }
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("registerDto", registerDto);
             return "register";
         }
 
