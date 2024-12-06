@@ -1,14 +1,50 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
     <title>Stores</title>
+    <link rel="stylesheet" href="/css/stores-index.css" />
+    <link rel="stylesheet" href="/css/pagination.css" />
 </head>
 <body>
-<ul>
-    <li th:each="store : ${stores}"
-        th:text="${store.name} + ' on ' + ${store.floorNumber} + ' floor'"
-    ></li>
-</ul>
+<div th:if="${#lists.isEmpty(stores)}">
+    <h1>Nothing to see here!</h1>
+    <a th:href="@{/stores/create}" class="btn btn-primary">Create Store</a>
+</div>
+
+<div class="container" th:if="${!#lists.isEmpty(stores)}">
+    <h1>All Stores</h1>
+
+    <a th:href="@{/stores/create}" class="btn btn-primary mb-3 mt-3">Create Store</a>
+
+    <ul class="store-list">
+        <li class="store-item" th:each="store : ${stores}">
+            <div class="store-details">
+                <span class="store-name" th:text="${store.name}">Store Name</span>
+                <span class="store-floor" th:text="'Floor: ' + ${store.floorNumber}">Floor Number</span>
+            </div>
+
+            <a th:href="@{/stores/{id}(id=${store.id})}" class="btn btn-primary">View Details</a>
+        </li>
+    </ul>
+</div>
+
+<nav class="mt-4" th:if="${!#lists.isEmpty(stores)}">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${page.hasPrevious()} ? '' : 'disabled'">
+            <a class="page-link" th:href="@{/stores(page=${page.number - 1})}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+            th:classappend="${page.number == i} ? 'active'">
+            <a class="page-link" th:href="@{/stores(page=${i})}" th:text="${i + 1}"></a>
+        </li>
+        <li class="page-item" th:classappend="${page.hasNext()} ? '' : 'disabled'">
+            <a class="page-link" th:href="@{/stores(page=${page.number + 1})}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
 </body>
 </html>

@@ -4,6 +4,7 @@ import com.deni.mallcoursework.domain.account.service.UserService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.service.StoreService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/stores")
@@ -24,8 +26,15 @@ public class StoresController {
     }
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("stores", storeService.getAll(Pageable.ofSize(20)));
+    public String index(@RequestParam(name = "page", defaultValue = "0") int pageNum,
+                        @RequestParam(defaultValue = "5") int size,
+                        Model model) {
+        Pageable pageable = PageRequest.of(pageNum, size);
+        var page = storeService.getAll(pageable);
+
+        model.addAttribute("stores", page.getContent());
+        model.addAttribute("page", page);
+
         return "stores/index";
     }
 

@@ -3,16 +3,26 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
     <title>Products</title>
+    <link rel="stylesheet" href="/css/products-index.css">
     <link rel="stylesheet" href="/css/pagination.css">
 </head>
 <body>
-<div class="container mt-5">
+<div class="container mt-5" th:if="${#lists.isEmpty(products)}">
+    <h1 class="text-center mb-4">Nothing to see here!</h1>
+
+    <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+       th:href="@{/products/create}"
+       class="btn btn-primary mb-3 p-2">Create Product</a>
+</div>
+
+<div class="container mt-5" th:if="${!#lists.isEmpty(products)}">
     <h1 class="text-center mb-4">Our Products</h1>
 
     <p class="text-danger text-center fs-5" th:if="${error}" th:text="${error}"></p>
 
     <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
-       th:href="@{/products/create}" class="btn btn-primary mb-3 p-2">Create Product</a>
+       th:href="@{/products/create}"
+       class="btn btn-primary mb-3 p-2">Create Product</a>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col" th:each="product : ${products}">
