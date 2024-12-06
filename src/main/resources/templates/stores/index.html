@@ -26,11 +26,21 @@
                 <span class="store-floor" th:text="'Floor: ' + ${store.floorNumber}">Floor Number</span>
             </div>
 
-            <a th:href="@{/stores/{id}(id=${store.id})}" class="btn btn-primary">View Details</a>
+            <div class="d-flex gap-2">
+                <a th:href="@{/stores/{id}(id=${store.id})}" class="btn btn-outline-primary">Details</a>
 
-            <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_MALL_OWNER')"
-               th:href="@{/stores/update/{id}(id=${store.id})}"
-               class="btn btn-success">Update</a>
+                <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_MALL_OWNER')"
+                   th:href="@{/stores/update/{id}(id=${store.id})}"
+                   class="btn btn-outline-success">Update</a>
+
+                <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+                      th:action="@{/stores/delete/{id}(id=${store.id})}"
+                      method="post"
+                      onsubmit="return confirmDeletion('store')"
+                >
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+            </div>
         </li>
     </ul>
 </div>
@@ -53,5 +63,7 @@
         </li>
     </ul>
 </nav>
+
+<script src="/js/confirmDeletion.js"></script>
 </body>
 </html>

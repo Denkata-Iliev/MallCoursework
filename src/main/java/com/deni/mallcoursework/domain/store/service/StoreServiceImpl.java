@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StoreServiceImpl implements StoreService {
+    private static final String STORE = "Store";
+    private static final String ID = "id";
+
     private final StoreRepository storeRepository;
     private final StoreMapper storeMapper;
     private final UserService userService;
@@ -83,8 +86,21 @@ public class StoreServiceImpl implements StoreService {
         storeRepository.save(store);
     }
 
+    @Override
+    public void delete(String id) {
+        var store = getStoreById(id);
+
+        // manually detaching manager from store,
+        // so the cascade deletion works correctly
+        var manager = userService.getUserById(store.getManager().getId());
+        manager.setStore(null);
+        storeRepository.save(store);
+
+        storeRepository.deleteById(id);
+    }
+
     private Store getStoreById(String id) {
         return storeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Store", "id"));
+                .orElseThrow(() -> new ResourceNotFoundException(STORE, ID));
     }
 }

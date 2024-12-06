@@ -101,4 +101,15 @@ public class StoresController {
 
         return "redirect:/stores";
     }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            storeService.delete(id);
+            return "redirect:/stores";
+        } catch (ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/stores";
+        }
+    }
 }

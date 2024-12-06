@@ -16,4 +16,6 @@ public interface StoreService {
     CreateStoreDto getCreateDtoById(String id);
 
     void update(CreateStoreDto createStoreDto, String id);
+
+    void delete(String id);
 }
