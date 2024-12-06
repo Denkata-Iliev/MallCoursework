@@ -51,9 +51,4 @@ public class AuthenticationController {
         }
         return "login";
     }
-
-    @GetMapping("/special")
-    public String special() {
-        return "special";
-    }
 }
