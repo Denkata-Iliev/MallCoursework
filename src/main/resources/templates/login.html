@@ -28,8 +28,9 @@
                 <span class="text-danger" th:text="${errorMsg}"></span>
             </div>
 
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Login</button>
+            <div class="d-flex justify-content-center gap-3">
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+                <a th:href="@{/register}" class="btn btn-outline-primary w-100">Register</a>
             </div>
         </form>
     </div>

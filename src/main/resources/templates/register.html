@@ -34,8 +34,9 @@
                     <span class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
                 </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Register</button>
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                    <a th:href="@{/login}" class="btn btn-outline-primary w-100">Login</a>
                 </div>
             </form>
         </div>
