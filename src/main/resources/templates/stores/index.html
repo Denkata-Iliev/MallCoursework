@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Stores</title>
+</head>
+<body>
+<ul>
+    <li th:each="store : ${stores}"
+        th:text="${store.name} + ' on ' + ${store.floorNumber} + ' floor'"
+    ></li>
+</ul>
+</body>
+</html>
