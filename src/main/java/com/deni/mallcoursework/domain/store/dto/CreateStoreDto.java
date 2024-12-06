@@ -17,6 +17,5 @@ public final class CreateStoreDto {
     @NotNull(message = Constants.BLANK_FIELD_ERROR)
     private Integer floorNumber;
 
-    @NotNull(message = Constants.BLANK_FIELD_ERROR)
     private String managerId;
 }

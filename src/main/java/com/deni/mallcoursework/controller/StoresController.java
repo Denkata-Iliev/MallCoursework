@@ -7,6 +7,7 @@ import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundExceptio
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -50,6 +51,7 @@ public class StoresController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("createStoreDto", new CreateStoreDto());
@@ -57,6 +59,7 @@ public class StoresController {
         return "stores/create";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
     @PostMapping("/create")
     public String create(@Valid CreateStoreDto createStoreDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -68,6 +71,7 @@ public class StoresController {
         return "redirect:/stores";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER', 'ROLE_MANAGER')")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -82,6 +86,7 @@ public class StoresController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER', 'ROLE_MANAGER')")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateStoreDto createStoreDto,
@@ -102,6 +107,7 @@ public class StoresController {
         return "redirect:/stores";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {

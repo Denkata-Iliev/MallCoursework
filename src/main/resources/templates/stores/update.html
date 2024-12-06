@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
     <title>Update Store</title>
     <link rel="stylesheet" href="/css/center-card.css">
@@ -20,7 +21,10 @@
                 <input class="form-control" type="number" id="floorNumber" th:field="*{floorNumber}" required>
             </div>
 
-            <div class="mb-3" th:if="${not #lists.isEmpty(managers)}">
+            <div class="mb-3"
+                 th:if="${not #lists.isEmpty(managers)}"
+                 sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')"
+            >
                 <label class="form-label" for="manager">Select Manager:</label>
                 <select class="form-select" id="manager" th:field="*{managerId}" required>
                     <option th:each="manager : ${managers}"
@@ -31,7 +35,10 @@
                 </select>
             </div>
 
-            <div class="mb-3" th:if="${#lists.isEmpty(managers)}">
+            <div class="mb-3"
+                 th:if="${#lists.isEmpty(managers)}"
+                 sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')"
+            >
                 <input class="form-control" type="text" value="No managers available" aria-label="no managers available" disabled readonly>
             </div>
 

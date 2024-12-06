@@ -64,8 +64,16 @@ public class StoreServiceImpl implements StoreService {
 
         storeMapper.update(createStoreDto, store);
 
-        String oldManagerId = store.getManager().getId();
+        // since a store can't exist without a manager in the first place,
+        // that means that if in the update, the managerId is null, then
+        // the store has to remain with the same manager
         String newManagerId = createStoreDto.getManagerId();
+        if (newManagerId == null) {
+            storeRepository.save(store);
+            return;
+        }
+
+        String oldManagerId = store.getManager().getId();
 
         // if no change in manager, just save
         if (oldManagerId.equals(newManagerId)) {

@@ -9,7 +9,9 @@
 <body>
 <div th:if="${#lists.isEmpty(stores)}">
     <h1>Nothing to see here!</h1>
-    <a th:href="@{/stores/create}" class="btn btn-primary">Create Store</a>
+    <a th:href="@{/stores/create}"
+       class="btn btn-primary"
+       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Store</a>
 </div>
 
 <h4 th:if="${error}" th:text="${error}" class="text-center text-danger"></h4>
@@ -17,7 +19,9 @@
 <div class="container" th:if="${!#lists.isEmpty(stores)}">
     <h1>All Stores</h1>
 
-    <a th:href="@{/stores/create}" class="btn btn-primary mb-3 mt-3">Create Store</a>
+    <a th:href="@{/stores/create}"
+       class="btn btn-primary mb-3 mt-3"
+       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Store</a>
 
     <ul class="store-list">
         <li class="store-item" th:each="store : ${stores}">
@@ -33,7 +37,7 @@
                    th:href="@{/stores/update/{id}(id=${store.id})}"
                    class="btn btn-outline-success">Update</a>
 
-                <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+                <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')"
                       th:action="@{/stores/delete/{id}(id=${store.id})}"
                       method="post"
                       onsubmit="return confirmDeletion('store')"
