@@ -12,4 +12,8 @@ public interface StoreService {
     Page<DisplayStoreDto> getAll(Pageable pageable);
 
     DetailsStoreDto getById(String id);
+
+    CreateStoreDto getCreateDtoById(String id);
+
+    void update(CreateStoreDto createStoreDto, String id);
 }

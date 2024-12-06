@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public final class CreateStoreDto {
-
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
     private String name;
 

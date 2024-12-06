@@ -11,5 +11,5 @@ public interface UserService {
 
     User getUserById(String id);
 
-    List<ManagerDto> getAllManagers();
+    List<ManagerDto> getAllManagers(String id);
 }

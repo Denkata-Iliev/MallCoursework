@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
+    <title>Update Store</title>
+    <link rel="stylesheet" href="/css/center-card.css">
+</head>
+<body>
+<div class="card-container">
+    <div class="card">
+        <h2 class="text-center mb-4">Update Store</h2>
+
+        <form th:action="@{/stores/update/{id}(id=${id})}" method="post" th:object="${createStoreDto}">
+            <div class="mb-3">
+                <label class="form-label" for="name">Store Name:</label>
+                <input class="form-control" type="text" id="name" th:field="*{name}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="floorNumber">Floor Number:</label>
+                <input class="form-control" type="number" id="floorNumber" th:field="*{floorNumber}" required>
+            </div>
+
+            <div class="mb-3" th:if="${not #lists.isEmpty(managers)}">
+                <label class="form-label" for="manager">Select Manager:</label>
+                <select class="form-select" id="manager" th:field="*{managerId}" required>
+                    <option th:each="manager : ${managers}"
+                            th:value="${manager.id}"
+                            th:text="${manager.fullname} + ' (' + ${manager.email} + ')'"
+                            th:selected="${manager.id.equals(createStoreDto.managerId)}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="mb-3" th:if="${#lists.isEmpty(managers)}">
+                <input class="form-control" type="text" value="No managers available" aria-label="no managers available" disabled readonly>
+            </div>
+
+            <div class="d-flex">
+                <button type="submit" th:disabled="${#lists.isEmpty(managers)}" class="btn btn-primary w-50">Save</button>
+                <a th:href="@{/stores}" class="btn btn-outline-danger w-50 ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

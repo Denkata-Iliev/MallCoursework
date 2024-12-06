@@ -53,7 +53,7 @@ public class StoresController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("createStoreDto", new CreateStoreDto());
-        model.addAttribute("managers", userService.getAllManagers());
+        model.addAttribute("managers", userService.getAllManagers(null));
         return "stores/create";
     }
 
@@ -65,6 +65,40 @@ public class StoresController {
         }
 
         storeService.create(createStoreDto);
+        return "redirect:/stores";
+    }
+
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            var createStoreDto = storeService.getCreateDtoById(id);
+            model.addAttribute("createStoreDto", createStoreDto);
+            model.addAttribute("managers", userService.getAllManagers(createStoreDto.getManagerId()));
+
+            return "stores/update";
+        } catch (ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/stores";
+        }
+    }
+
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable String id,
+                         @Valid CreateStoreDto createStoreDto,
+                         BindingResult bindingResult,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("createStoreDto", createStoreDto);
+            return "stores/update";
+        }
+
+        try {
+            storeService.update(createStoreDto, id);
+        } catch (ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
         return "redirect:/stores";
     }
 }
