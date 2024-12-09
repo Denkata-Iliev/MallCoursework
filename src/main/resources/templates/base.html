@@ -1,13 +1,70 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:fragment="base_head(title, links)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:replace="${title}">Mall Coursework</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
-    <th:block th:replace="${links}" />
+    <th:block th:replace="${links}"/>
 </head>
 <body>
 
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="/images/logo.png" alt="Logo" style="height: 64px;">
+        </a>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link fs-3" href="/">Malls</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fs-3" href="/stores">Stores</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Profile -->
+        <div class="d-flex">
+            <!-- User logged in -->
+            <div sec:authorize="isAuthenticated()">
+
+                <div class="dropdown">
+                    <button class="dropdown-toggle btn btn-warning"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            th:text="${#authentication.name}"></button>
+
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/profile">Profile</a></li>
+
+                        <li>
+                            <form
+                                    th:action="@{/logout}"
+                                    method="post"
+                                    class="dropdown-item"
+                            >
+                                <button type="submit">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- User not logged in -->
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/login" class="btn btn-outline-primary ms-2">Login</a>
+                <a href="/register" class="btn btn-primary ms-2">Register</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<th:block th:fragment="scripts">
+    <script src="/bootstrap/js/bootstrap.bundle.min.js" defer></script>
+</th:block>
 </body>
 </html>

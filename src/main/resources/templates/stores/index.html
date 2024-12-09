@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/css/pagination.css" />
 </head>
 <body>
+<nav th:replace="~{base :: navbar}"></nav>
+
 <div th:if="${#lists.isEmpty(stores)}">
     <h1>Nothing to see here!</h1>
     <a th:href="@{/stores/create}"
@@ -67,6 +69,7 @@
     </ul>
 </nav>
 
+<th:block th:replace="~{base :: scripts}"></th:block>
 <script src="/js/confirmDeletion.js"></script>
 </body>
 </html>

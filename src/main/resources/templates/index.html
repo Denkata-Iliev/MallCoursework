@@ -1,18 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: base_head(~{::title}, ~{})}">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Home</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
-<a href="/register">Register</a> <br>
-<a href="/products/create">Create Product</a> <br>
-<a href="/products">Products</a> <br>
-<a href="/login">Login</a> <br>
-<a href="/stores">Stores</a> <br>
-<a href="/stores/create">Create Store</a> <br>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Logout">
-</form>
+<nav th:replace="~{base :: navbar}"></nav>
+
+<th:block th:replace="~{base :: scripts}"></th:block>
 </body>
 </html>

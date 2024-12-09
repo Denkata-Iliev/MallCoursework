@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="/css/store-details.css">
 </head>
 <body>
+<nav th:replace="~{base :: navbar}"></nav>
+
 <div class="container mt-5">
 
     <div class="card shadow-sm card-custom">
@@ -39,5 +41,7 @@
         <a th:href="@{/stores}" class="btn btn-secondary">Back to Stores</a>
     </div>
 </div>
+
+<th:block th:replace="~{base :: scripts}"></th:block>
 </body>
 </html>
