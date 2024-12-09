@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.store.service;
 
+import com.cloudinary.Cloudinary;
 import com.deni.mallcoursework.domain.account.service.UserService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DetailsStoreDto;
@@ -11,6 +12,10 @@ import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundExceptio
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class StoreServiceImpl implements StoreService {
@@ -20,11 +25,16 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final StoreMapper storeMapper;
     private final UserService userService;
+    private final Cloudinary cloudinary;
 
-    public StoreServiceImpl(StoreRepository storeRepository, StoreMapper storeMapper, UserService userService) {
+    public StoreServiceImpl(StoreRepository storeRepository,
+                            StoreMapper storeMapper,
+                            UserService userService,
+                            Cloudinary cloudinary) {
         this.storeRepository = storeRepository;
         this.storeMapper = storeMapper;
         this.userService = userService;
+        this.cloudinary = cloudinary;
     }
 
     @Override
@@ -45,9 +55,8 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public DetailsStoreDto getById(String id) {
+    public DetailsStoreDto getDetailsById(String id) {
         var store = getStoreById(id);
-
         return storeMapper.toDetailsStoreDto(store);
     }
 
@@ -109,11 +118,33 @@ public class StoreServiceImpl implements StoreService {
         manager.setStore(null);
         storeRepository.save(store);
 
+        // deleting all product images from cloudinary
+        for (var product : store.getProducts()) {
+            var imageUrl = product.getImageUrl();
+            if (StringUtils.isEmptyOrWhitespace(imageUrl)) {
+                return;
+            }
+
+            try {
+                cloudinary.uploader().destroy(getPublicId(imageUrl), Map.of());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         storeRepository.deleteById(id);
     }
 
     private Store getStoreById(String id) {
         return storeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(STORE, ID));
+    }
+
+    private String getPublicId(String imageUrl) {
+        var lastSlash = imageUrl.lastIndexOf('/');
+        var lastDot = imageUrl.lastIndexOf('.');
+        var publicId = imageUrl.substring(lastSlash + 1, lastDot);
+
+        return publicId;
     }
 }

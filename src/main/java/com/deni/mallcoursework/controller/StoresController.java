@@ -1,6 +1,7 @@
 package com.deni.mallcoursework.controller;
 
 import com.deni.mallcoursework.domain.account.service.UserService;
+import com.deni.mallcoursework.domain.product.service.ProductService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.service.StoreService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
@@ -12,17 +13,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/stores")
 public class StoresController {
     private final UserService userService;
     private final StoreService storeService;
+    private final ProductService productService;
 
-    public StoresController(UserService userService, StoreService storeService) {
+    public StoresController(UserService userService, StoreService storeService, ProductService productService) {
         this.userService = userService;
         this.storeService = storeService;
+        this.productService = productService;
     }
 
     @GetMapping
@@ -39,15 +41,31 @@ public class StoresController {
     }
 
     @GetMapping("/{id}")
-    public String getById(@PathVariable String id, RedirectAttributes redirectAttributes, Model model) {
+    public String getById(@PathVariable String id,
+                          @RequestParam(name = "page", defaultValue = "0") int pageNum,
+                          @RequestParam(defaultValue = "5") int size,
+                          Model model) {
         try {
-            var store = storeService.getById(id);
-            model.addAttribute("store", store);
+            Pageable pageable = PageRequest.of(pageNum, size);
+            var productsPage = productService.getAll(pageable, id);
+            model.addAttribute("products", productsPage.getContent());
+            model.addAttribute("page", productsPage);
 
+            return "stores/products";
+        } catch (ResourceNotFoundException e) {
+            return "redirect:/error/404";
+        }
+    }
+
+    @GetMapping("/details/{id}")
+    public String details(@PathVariable String id, Model model) {
+        try {
+            var detailsDto = storeService.getDetailsById(id);
+
+            model.addAttribute("store", detailsDto);
             return "stores/details";
         } catch (ResourceNotFoundException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/stores";
+            return "redirect:/error/404";
         }
     }
 
@@ -73,7 +91,7 @@ public class StoresController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER', 'ROLE_MANAGER')")
     @GetMapping("/update/{id}")
-    public String update(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+    public String update(@PathVariable String id, Model model) {
         try {
             var createStoreDto = storeService.getCreateDtoById(id);
             model.addAttribute("createStoreDto", createStoreDto);
@@ -81,8 +99,7 @@ public class StoresController {
 
             return "stores/update";
         } catch (ResourceNotFoundException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/stores";
+            return "redirect:/error/404";
         }
     }
 
@@ -91,8 +108,7 @@ public class StoresController {
     public String update(@PathVariable String id,
                          @Valid CreateStoreDto createStoreDto,
                          BindingResult bindingResult,
-                         Model model,
-                         RedirectAttributes redirectAttributes) {
+                         Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("createStoreDto", createStoreDto);
             return "stores/update";
@@ -101,7 +117,7 @@ public class StoresController {
         try {
             storeService.update(createStoreDto, id);
         } catch (ResourceNotFoundException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/error/404";
         }
 
         return "redirect:/stores";
@@ -109,13 +125,12 @@ public class StoresController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    public String delete(@PathVariable String id) {
         try {
             storeService.delete(id);
             return "redirect:/stores";
         } catch (ResourceNotFoundException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/stores";
+            return "redirect:/error/404";
         }
     }
 }
