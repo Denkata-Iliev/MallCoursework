@@ -52,6 +52,11 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public Store getById(String id) {
+        return getStoreById(id);
+    }
+
+    @Override
     public CreateStoreDto getCreateDtoById(String id) {
         var store = getStoreById(id);
 
