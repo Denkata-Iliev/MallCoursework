@@ -11,17 +11,15 @@
     <h1 class="text-center mb-4">Nothing to see here!</h1>
 
     <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
-       th:href="@{/products/create}"
+       th:href="@{/products/create/{storeId}(storeId=${id})}"
        class="btn btn-primary mb-3 p-2">Create Product</a>
 </div>
-
-<h4 class="text-danger text-center" th:if="${error}" th:text="${error}"></h4>
 
 <div class="container mt-5" th:if="${!#lists.isEmpty(products)}">
     <h1 class="text-center mb-4">Our Products</h1>
 
     <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
-       th:href="@{/products/create}"
+       th:href="@{/products/create/{storeId}(storeId=${id})}"
        class="btn btn-primary mb-3 p-2">Create Product</a>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -38,7 +36,8 @@
                         <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-outline-primary">Details</a>
 
                         <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
-                           th:href="@{/products/update/{id}(id=${product.id})}" class="btn btn-outline-success">Update</a>
+                           th:href="@{/products/update/{id}(id=${product.id})}"
+                           class="btn btn-outline-success">Update</a>
 
                         <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
                               th:action="@{/products/delete/{id}(id=${product.id})}"

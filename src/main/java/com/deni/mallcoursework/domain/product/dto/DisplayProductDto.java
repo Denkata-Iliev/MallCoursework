@@ -14,6 +14,7 @@ public final class DisplayProductDto {
     private BigDecimal price;
     private String description;
     private String imageUrl;
+    private String storeId;
 
     public String getShortDescription() {
         if (description == null || StringUtils.isEmptyOrWhitespace(description)) {

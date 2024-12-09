@@ -14,7 +14,7 @@
             <h1 th:text="${product.name}"></h1>
             <p class="lead">$<span th:text="${product.price}"></span></p>
             <p th:text="${product.description}"></p>
-            <a th:href="@{/products}" class="btn btn-primary">Back to Products</a>
+            <a th:href="@{/stores/{id}(id=${product.storeId})}" class="btn btn-primary">Back to Products</a>
 
             <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
                th:href="@{/products/update/{id}(id=${product.id})}" class="btn btn-outline-success">Update</a>

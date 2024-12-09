@@ -10,7 +10,11 @@
     <div class="card">
         <h2 class="text-center mb-4">Create Product</h2>
 
-        <form th:action="@{/products/create}" th:object="${createProductDto}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/products/create/{storeId}(storeId=${storeId})}"
+              th:object="${createProductDto}"
+              method="post"
+              enctype="multipart/form-data">
+            
             <div class="mb-3">
                 <label for="name" class="form-label">Name:</label>
                 <input type="text" th:field="*{name}" id="name" class="form-control" required>
@@ -39,7 +43,7 @@
 
             <div class="d-flex">
                 <button type="submit" class="btn btn-primary w-50">Create</button>
-                <a th:href="@{/products}" class="btn btn-outline-danger w-50 ms-2">Cancel</a>
+                <a th:href="@{/stores/${storeId}}" class="btn btn-outline-danger w-50 ms-2">Cancel</a>
             </div>
         </form>
     </div>
