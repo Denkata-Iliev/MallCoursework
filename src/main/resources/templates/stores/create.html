@@ -13,11 +13,13 @@
             <div class="mb-3">
                 <label class="form-label" for="name">Store Name:</label>
                 <input class="form-control" type="text" id="name" th:field="*{name}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label" for="floorNumber">Floor Number:</label>
                 <input class="form-control" type="number" id="floorNumber" th:field="*{floorNumber}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('floorNumber')}" th:errors="*{floorNumber}"></span>
             </div>
 
             <div class="mb-3" th:if="${not #lists.isEmpty(managers)}">
