@@ -21,7 +21,7 @@ public class AuthorizationService {
         this.productService = productService;
     }
 
-    public boolean isAllowedToModifyProductId(String productId) {
+    public boolean isAllowedToModifyProductsWithId(String productId) {
         var authentication = getAuthentication();
 
         if (authentication == null) {
@@ -35,14 +35,14 @@ public class AuthorizationService {
         var product = productService.getEntityById(productId);
         var storeId = product.getStore().getId();
 
-        if (isManagerOfStore(authentication, storeId) || isEmployeeOfStore(authentication, storeId)) {
+        if (isRoleOfStore(authentication, storeId, Role.MANAGER) || isRoleOfStore(authentication, storeId, Role.EMPLOYEE)) {
             return true;
         }
 
         return false;
     }
 
-    public boolean isAllowedToModify(String storeId) {
+    public boolean isAllowedToModifyProductsWithStoreId(String storeId) {
         var authentication = getAuthentication();
 
         if (authentication == null) {
@@ -53,21 +53,22 @@ public class AuthorizationService {
             return true;
         }
 
-        if (isManagerOfStore(authentication, storeId) || isEmployeeOfStore(authentication, storeId)) {
+        if (isRoleOfStore(authentication, storeId, Role.MANAGER) || isRoleOfStore(authentication, storeId, Role.EMPLOYEE)) {
             return true;
         }
 
         return false;
     }
 
-    private boolean isManagerOfStore(Authentication authentication, String storeId) {
+    private boolean isRoleOfStore(Authentication authentication, String storeId, Role role) {
         var user = getUser(authentication);
-        return user.getStore().getId().equals(storeId) && user.getRole().equals(Role.MANAGER);
-    }
 
-    private boolean isEmployeeOfStore(Authentication authentication, String storeId) {
-        var user = getUser(authentication);
-        return user.getStore().getId().equals(storeId) && user.getRole().equals(Role.EMPLOYEE);
+        if (user.getStore() == null) {
+            return false;
+        }
+
+        String userStoreId = user.getStore().getId();
+        return userStoreId.equals(storeId) && user.getRole().equals(role);
     }
 
     private boolean isAdmin(Authentication authentication) {
