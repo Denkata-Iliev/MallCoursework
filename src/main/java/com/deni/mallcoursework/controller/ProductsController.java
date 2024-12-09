@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/products")
 public class ProductsController {
-    private static final String IS_ADMIN_MANAGER_OR_EMPLOYEE = "hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')";
     private final ProductService productService;
 
     @Autowired
@@ -34,13 +33,13 @@ public class ProductsController {
         }
     }
 
-    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
+    @PreAuthorize("@authorizationService.isAllowedToModify(#storeId)")
     @GetMapping("/create/{storeId}")
     public String create(@PathVariable String storeId, CreateProductDto createProductDto) {
         return "products/create";
     }
 
-    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
+    @PreAuthorize("@authorizationService.isAllowedToModify(#storeId)")
     @PostMapping("/create/{storeId}")
     public String create(@PathVariable String storeId,
                          @Valid CreateProductDto createProductDto,
@@ -55,7 +54,7 @@ public class ProductsController {
         return "redirect:/stores/" + storeId;
     }
 
-    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
+    @PreAuthorize("@authorizationService.isAllowedToModifyProductId(#id)")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
@@ -68,7 +67,7 @@ public class ProductsController {
         }
     }
 
-    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
+    @PreAuthorize("@authorizationService.isAllowedToModifyProductId(#id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateProductDto createProductDto,
@@ -89,7 +88,7 @@ public class ProductsController {
         return "redirect:/stores/" + storeId;
     }
 
-    @PreAuthorize(IS_ADMIN_MANAGER_OR_EMPLOYEE)
+    @PreAuthorize("@authorizationService.isAllowedToModifyProductId(#id)")
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         String storeId;

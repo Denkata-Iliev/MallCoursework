@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
     <title>Products</title>
     <link rel="stylesheet" href="/css/products-index.css">
@@ -12,7 +11,7 @@
 <div class="container mt-5" th:if="${#lists.isEmpty(products)}">
     <h1 class="text-center mb-4">Nothing to see here!</h1>
 
-    <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+    <a th:if="${@authorizationService.isAllowedToModify(id)}"
        th:href="@{/products/create/{storeId}(storeId=${id})}"
        class="btn btn-primary mb-3 p-2">Create Product</a>
 </div>
@@ -20,7 +19,7 @@
 <div class="container mt-5" th:if="${!#lists.isEmpty(products)}">
     <h1 class="text-center mb-4">Our Products</h1>
 
-    <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+    <a th:if="${@authorizationService.isAllowedToModify(id)}"
        th:href="@{/products/create/{storeId}(storeId=${id})}"
        class="btn btn-primary mb-3 p-2">Create Product</a>
 
@@ -37,11 +36,11 @@
                     <div class="d-flex gap-2">
                         <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-outline-primary">Details</a>
 
-                        <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+                        <a th:if="${@authorizationService.isAllowedToModify(id)}"
                            th:href="@{/products/update/{id}(id=${product.id})}"
                            class="btn btn-outline-success">Update</a>
 
-                        <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')"
+                        <form th:if="${@authorizationService.isAllowedToModify(id)}"
                               th:action="@{/products/delete/{id}(id=${product.id})}"
                               method="post"
                               class="d-flex justify-content-end w-100"
@@ -59,16 +58,16 @@
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${page.hasPrevious()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/products(page=${page.number - 1})}" aria-label="Previous">
+                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${page.number - 1})}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
                 th:classappend="${page.number == i} ? 'active'">
-                <a class="page-link" th:href="@{/products(page=${i})}" th:text="${i + 1}"></a>
+                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${i})}" th:text="${i + 1}"></a>
             </li>
             <li class="page-item" th:classappend="${page.hasNext()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/products(page=${page.number + 1})}" aria-label="Next">
+                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${page.number + 1})}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

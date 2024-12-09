@@ -20,8 +20,8 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 public class SecurityConfig {
     private static final String KEY = "myKey";
     private static final String[] ALLOW_ALL_LIST = {
-            "/", "/css/**", "/js/**", "/bootstrap/css/**", "/bootstrap/js/**",
-            "/products", "/products/{id}"
+            "/", "/css/**", "/js/**", "/bootstrap/css/**", "/bootstrap/js/**", "/images/**",
+            "/stores", "stores/{id}", "stores/details/{id}", "/products/{id}"
     };
 
     private final RememberMeServices rememberMeServices;

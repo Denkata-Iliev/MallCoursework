@@ -29,7 +29,10 @@ public class ProductServiceImpl implements ProductService {
     private final StoreService storeService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, Cloudinary cloudinary, ProductMapper mapper, StoreService storeService) {
+    public ProductServiceImpl(ProductRepository productRepository,
+                              Cloudinary cloudinary,
+                              ProductMapper mapper,
+                              StoreService storeService) {
         this.productRepository = productRepository;
         this.cloudinary = cloudinary;
         this.mapper = mapper;
@@ -72,6 +75,11 @@ public class ProductServiceImpl implements ProductService {
         var product = getProductById(id);
 
         return mapper.toDisplayProductDto(product);
+    }
+
+    @Override
+    public Product getEntityById(String id) {
+        return getProductById(id);
     }
 
     @Override

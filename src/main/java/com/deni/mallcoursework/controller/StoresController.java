@@ -43,7 +43,7 @@ public class StoresController {
     @GetMapping("/{id}")
     public String getById(@PathVariable String id,
                           @RequestParam(name = "page", defaultValue = "0") int pageNum,
-                          @RequestParam(defaultValue = "5") int size,
+                          @RequestParam(defaultValue = "9") int size,
                           Model model) {
         try {
             Pageable pageable = PageRequest.of(pageNum, size);
