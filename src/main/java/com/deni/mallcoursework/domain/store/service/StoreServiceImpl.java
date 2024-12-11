@@ -1,7 +1,7 @@
 package com.deni.mallcoursework.domain.store.service;
 
 import com.cloudinary.Cloudinary;
-import com.deni.mallcoursework.domain.account.service.UserService;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DetailsStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;

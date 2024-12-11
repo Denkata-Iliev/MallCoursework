@@ -1,11 +1,11 @@
-package com.deni.mallcoursework.domain.account.service;
+package com.deni.mallcoursework.domain.user.service;
 
-import com.deni.mallcoursework.domain.account.dto.ManagerDto;
-import com.deni.mallcoursework.domain.account.entity.User;
-import com.deni.mallcoursework.domain.account.mapper.UserMapper;
-import com.deni.mallcoursework.domain.account.dto.RegisterDto;
-import com.deni.mallcoursework.domain.account.entity.Role;
-import com.deni.mallcoursework.domain.account.repository.UserRepository;
+import com.deni.mallcoursework.domain.user.dto.ManagerDto;
+import com.deni.mallcoursework.domain.user.entity.User;
+import com.deni.mallcoursework.domain.user.mapper.UserMapper;
+import com.deni.mallcoursework.domain.user.dto.RegisterDto;
+import com.deni.mallcoursework.domain.user.entity.Role;
+import com.deni.mallcoursework.domain.user.repository.UserRepository;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

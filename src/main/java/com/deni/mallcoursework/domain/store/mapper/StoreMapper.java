@@ -1,6 +1,6 @@
 package com.deni.mallcoursework.domain.store.mapper;
 
-import com.deni.mallcoursework.domain.account.mapper.UserMapper;
+import com.deni.mallcoursework.domain.user.mapper.UserMapper;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DetailsStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;

@@ -1,7 +1,7 @@
 package com.deni.mallcoursework.controller;
 
-import com.deni.mallcoursework.domain.account.dto.RegisterDto;
-import com.deni.mallcoursework.domain.account.service.UserService;
+import com.deni.mallcoursework.domain.user.dto.RegisterDto;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

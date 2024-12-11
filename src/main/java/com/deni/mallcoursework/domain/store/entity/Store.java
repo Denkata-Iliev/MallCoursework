@@ -1,6 +1,6 @@
 package com.deni.mallcoursework.domain.store.entity;
 
-import com.deni.mallcoursework.domain.account.entity.User;
+import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.product.entity.Product;
 import com.deni.mallcoursework.util.Constants;
 import jakarta.persistence.*;

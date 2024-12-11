@@ -1,4 +1,4 @@
-package com.deni.mallcoursework.domain.account.entity;
+package com.deni.mallcoursework.domain.user.entity;
 
 public enum Role {
     ADMIN,

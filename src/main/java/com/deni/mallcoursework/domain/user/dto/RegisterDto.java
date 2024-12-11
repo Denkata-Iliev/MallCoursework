@@ -1,4 +1,4 @@
-package com.deni.mallcoursework.domain.account.dto;
+package com.deni.mallcoursework.domain.user.dto;
 
 import com.deni.mallcoursework.util.Constants;
 import jakarta.validation.constraints.Email;

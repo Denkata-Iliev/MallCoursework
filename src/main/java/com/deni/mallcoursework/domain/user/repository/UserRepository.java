@@ -1,7 +1,7 @@
-package com.deni.mallcoursework.domain.account.repository;
+package com.deni.mallcoursework.domain.user.repository;
 
-import com.deni.mallcoursework.domain.account.entity.Role;
-import com.deni.mallcoursework.domain.account.entity.User;
+import com.deni.mallcoursework.domain.user.entity.Role;
+import com.deni.mallcoursework.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

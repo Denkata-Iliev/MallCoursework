@@ -1,4 +1,4 @@
-package com.deni.mallcoursework.domain.account.entity;
+package com.deni.mallcoursework.domain.user.entity;
 
 import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.util.Constants;

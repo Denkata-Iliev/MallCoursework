@@ -1,8 +1,8 @@
 package com.deni.mallcoursework.infrastructure.security;
 
-import com.deni.mallcoursework.domain.account.entity.Role;
-import com.deni.mallcoursework.domain.account.entity.User;
-import com.deni.mallcoursework.domain.account.service.UserService;
+import com.deni.mallcoursework.domain.user.entity.Role;
+import com.deni.mallcoursework.domain.user.entity.User;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.domain.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

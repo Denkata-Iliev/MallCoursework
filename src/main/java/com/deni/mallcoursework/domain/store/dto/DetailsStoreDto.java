@@ -1,6 +1,6 @@
 package com.deni.mallcoursework.domain.store.dto;
 
-import com.deni.mallcoursework.domain.account.dto.ManagerDto;
+import com.deni.mallcoursework.domain.user.dto.ManagerDto;
 import lombok.Getter;
 import lombok.Setter;
 

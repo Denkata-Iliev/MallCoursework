@@ -1,4 +1,4 @@
-package com.deni.mallcoursework.domain.account.dto;
+package com.deni.mallcoursework.domain.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;

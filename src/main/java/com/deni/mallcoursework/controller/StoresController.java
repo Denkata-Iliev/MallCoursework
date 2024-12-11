@@ -1,6 +1,6 @@
 package com.deni.mallcoursework.controller;
 
-import com.deni.mallcoursework.domain.account.service.UserService;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.domain.product.service.ProductService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.service.StoreService;
