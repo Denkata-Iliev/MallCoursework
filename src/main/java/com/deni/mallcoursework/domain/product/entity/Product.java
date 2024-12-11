@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.product.entity;
 
+import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.util.Constants;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -31,4 +32,8 @@ public class Product {
 
     @Column(name = "img_url")
     private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 }

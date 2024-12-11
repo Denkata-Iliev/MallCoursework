@@ -1,13 +1,19 @@
-package com.deni.mallcoursework.domain.account.service;
+package com.deni.mallcoursework.domain.user.service;
 
-import com.deni.mallcoursework.domain.account.mapper.UserMapper;
-import com.deni.mallcoursework.domain.account.dto.RegisterDto;
-import com.deni.mallcoursework.domain.account.entity.Role;
-import com.deni.mallcoursework.domain.account.repository.UserRepository;
+import com.deni.mallcoursework.domain.user.dto.ManagerDto;
+import com.deni.mallcoursework.domain.user.entity.User;
+import com.deni.mallcoursework.domain.user.mapper.UserMapper;
+import com.deni.mallcoursework.domain.user.dto.RegisterDto;
+import com.deni.mallcoursework.domain.user.entity.Role;
+import com.deni.mallcoursework.domain.user.repository.UserRepository;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
+import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,5 +44,25 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.CLIENT);
 
         repository.save(user);
+    }
+
+    @Override
+    public User getUserById(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id"));
+    }
+
+    @Override
+    public List<ManagerDto> getAllManagers(String id) {
+        var availableManagers = repository.findAllByRoleAndStoreIsNull(Role.MANAGER);
+
+        if (id != null) {
+            availableManagers.add(getUserById(id));
+        }
+
+        return availableManagers
+                .stream()
+                .map(userMapper::toManagerDto)
+                .collect(Collectors.toList());
     }
 }

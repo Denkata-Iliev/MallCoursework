@@ -19,9 +19,9 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 @EnableMethodSecurity
 public class SecurityConfig {
     private static final String KEY = "myKey";
-    private static final String[] ALLOW_ANONYMOUS_LIST = {
-            "/", "/register", "/login", "/css/**", "/js/**", "/bootstrap/css/**", "/bootstrap/js/**",
-            "/products", "/products/{id}"
+    private static final String[] ALLOW_ALL_LIST = {
+            "/", "/css/**", "/js/**", "/bootstrap/css/**", "/bootstrap/js/**", "/images/**",
+            "/stores", "stores/{id}", "stores/details/{id}", "/products/{id}"
     };
 
     private final RememberMeServices rememberMeServices;
@@ -36,8 +36,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                         auth
-                            .requestMatchers(ALLOW_ANONYMOUS_LIST).permitAll()
-                            .anyRequest().authenticated()
+                                .requestMatchers(ALLOW_ALL_LIST).permitAll()
+                                .requestMatchers("/register", "/login").anonymous()
+                                .anyRequest().authenticated()
                 )
                 .formLogin(configurer -> {
                     configurer.loginPage("/login");

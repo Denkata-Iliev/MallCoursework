@@ -1,7 +1,7 @@
 package com.deni.mallcoursework.controller;
 
-import com.deni.mallcoursework.domain.account.dto.RegisterDto;
-import com.deni.mallcoursework.domain.account.service.UserService;
+import com.deni.mallcoursework.domain.user.dto.RegisterDto;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +29,15 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public String register(@Valid RegisterDto registerDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("registerDto", registerDto);
+            return "register";
+        }
 
         try {
             userService.register(registerDto);
         } catch (ConflictException e) {
             bindingResult.rejectValue(e.getField(), "error.registerDto", e.getMessage());
-        }
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("registerDto", registerDto);
             return "register";
         }
 
@@ -50,10 +50,5 @@ public class AuthenticationController {
             model.addAttribute("errorMsg", "Invalid username or password!");
         }
         return "login";
-    }
-
-    @GetMapping("/special")
-    public String special() {
-        return "special";
     }
 }

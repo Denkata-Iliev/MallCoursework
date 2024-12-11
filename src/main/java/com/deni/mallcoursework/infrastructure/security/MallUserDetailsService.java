@@ -1,6 +1,6 @@
 package com.deni.mallcoursework.infrastructure.security;
 
-import com.deni.mallcoursework.domain.account.repository.UserRepository;
+import com.deni.mallcoursework.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +24,7 @@ public class MallUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userRepository.findByEmail(username);
         return new MallUserDetails(
+                user.getId(),
                 user.getEmail(),
                 user.getPassword(),
                 Collections.singletonList(

@@ -3,8 +3,10 @@ package com.deni.mallcoursework.domain.product.service;
 import com.cloudinary.Cloudinary;
 import com.deni.mallcoursework.domain.product.dto.CreateProductDto;
 import com.deni.mallcoursework.domain.product.dto.DisplayProductDto;
+import com.deni.mallcoursework.domain.product.entity.Product;
 import com.deni.mallcoursework.domain.product.mapper.ProductMapper;
 import com.deni.mallcoursework.domain.product.repository.ProductRepository;
+import com.deni.mallcoursework.domain.store.service.StoreService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,16 +26,21 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final Cloudinary cloudinary;
     private final ProductMapper mapper;
+    private final StoreService storeService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, Cloudinary cloudinary, ProductMapper mapper) {
+    public ProductServiceImpl(ProductRepository productRepository,
+                              Cloudinary cloudinary,
+                              ProductMapper mapper,
+                              StoreService storeService) {
         this.productRepository = productRepository;
         this.cloudinary = cloudinary;
         this.mapper = mapper;
+        this.storeService = storeService;
     }
 
     @Override
-    public void create(CreateProductDto createDto) {
+    public void create(CreateProductDto createDto, String storeId) {
         var product = mapper.fromCreateDto(createDto);
 
         Map uploadResult = null;
@@ -51,41 +58,46 @@ public class ProductServiceImpl implements ProductService {
             product.setImageUrl(url);
         }
 
+        var store = storeService.getById(storeId);
+        product.setStore(store);
+
         productRepository.save(product);
     }
 
     @Override
-    public Page<DisplayProductDto> getAll(Pageable pageable) {
-        return productRepository.findAll(pageable)
+    public Page<DisplayProductDto> getAll(Pageable pageable, String storeId) {
+        return productRepository.findByStore_Id(storeId, pageable)
                 .map(mapper::toDisplayProductDto);
     }
 
     @Override
     public DisplayProductDto getById(String id) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+        var product = getProductById(id);
 
         return mapper.toDisplayProductDto(product);
     }
 
     @Override
+    public Product getEntityById(String id) {
+        return getProductById(id);
+    }
+
+    @Override
     public CreateProductDto getCreateDtoById(String id) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+        var product = getProductById(id);
 
         return mapper.toCreateProductDto(product);
     }
 
     @Override
-    public void update(CreateProductDto createDto, String id) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+    public String update(CreateProductDto createDto, String id) {
+        var product = getProductById(id);
 
         mapper.update(createDto, product);
 
         if (createDto.getImageFile().isEmpty()) {
             productRepository.save(product);
-            return;
+            return product.getStore().getId();
         }
 
         Map uploadResult;
@@ -110,24 +122,31 @@ public class ProductServiceImpl implements ProductService {
         }
 
         productRepository.save(product);
+        return product.getStore().getId();
     }
 
     @Override
-    public void delete(String id) {
-        var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
+    public String delete(String id) {
+        var product = getProductById(id);
 
         productRepository.deleteById(id);
         try {
             var imageUrl = product.getImageUrl();
             if (StringUtils.isEmptyOrWhitespace(imageUrl)) {
-                return;
+                return product.getStore().getId();
             }
 
             cloudinary.uploader().destroy(getPublicId(imageUrl), Map.of());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        return product.getStore().getId();
+    }
+
+    private Product getProductById(String id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT, ID));
     }
 
     private String getPublicId(String imageUrl) {
