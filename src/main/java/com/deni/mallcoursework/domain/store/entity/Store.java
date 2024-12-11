@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.store.entity;
 
+import com.deni.mallcoursework.domain.mall.entity.Mall;
 import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.product.entity.Product;
 import com.deni.mallcoursework.util.Constants;
@@ -30,6 +31,10 @@ public class Store {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "manager_id", nullable = false, unique = true)
     private User manager;
+
+    @ManyToOne
+    @JoinColumn(name = "mall_id", nullable = false)
+    private Mall mall;
 
     @OneToMany(
             cascade = CascadeType.ALL,
