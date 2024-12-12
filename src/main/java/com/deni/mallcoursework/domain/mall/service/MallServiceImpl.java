@@ -55,4 +55,27 @@ public class MallServiceImpl implements MallService {
 
         return mallMapper.toDetailsMallDto(mall);
     }
+
+    @Override
+    public CreateMallDto getCreateDtoById(String id) {
+        var mall = getEntityById(id);
+
+        return mallMapper.toCreateMallDto(mall);
+    }
+
+    @Override
+    public void update(CreateMallDto createMallDto, String id) {
+        var mall = getEntityById(id);
+
+        mallMapper.update(createMallDto, mall);
+
+        String currentOwnerId = mall.getOwner().getId();
+        String newOwnerId = createMallDto.getOwnerId();
+        if (!currentOwnerId.equals(newOwnerId)) {
+            var owner = userService.getUserById(newOwnerId);
+            mall.setOwner(owner);
+        }
+
+        mallRepository.save(mall);
+    }
 }

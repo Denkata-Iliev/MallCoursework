@@ -7,6 +7,7 @@ import com.deni.mallcoursework.domain.mall.entity.Mall;
 import com.deni.mallcoursework.domain.user.mapper.UserMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface MallMapper {
@@ -17,4 +18,9 @@ public interface MallMapper {
     DisplayMallDto toDisplayMallDto(Mall mall);
 
     DetailsMallDto toDetailsMallDto(Mall mall);
+
+    @Mapping(source = "owner.id", target = "ownerId")
+    CreateMallDto toCreateMallDto(Mall mall);
+
+    void update(CreateMallDto createMallDto, @MappingTarget Mall mall);
 }

@@ -65,4 +65,38 @@ public class MallsController {
             return "redirect:/error/404";
         }
     }
+
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable String id, Model model) {
+        try {
+            var createMallDto = mallService.getCreateDtoById(id);
+            var mallOwners = userService.getAllMallOwners();
+
+            model.addAttribute("createMallDto", createMallDto);
+            model.addAttribute("mallOwners", mallOwners);
+
+            return "malls/update";
+        } catch (ResourceNotFoundException e) {
+            return "redirect:/error/404";
+        }
+    }
+
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable String id,
+                         @Valid CreateMallDto createMallDto,
+                         BindingResult bindingResult,
+                         Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("createMallDto", createMallDto);
+            return "malls/update";
+        }
+
+        try {
+            mallService.update(createMallDto, id);
+
+            return "redirect:/malls";
+        } catch (ResourceNotFoundException e) {
+            return "redirect:/error/404";
+        }
+    }
 }

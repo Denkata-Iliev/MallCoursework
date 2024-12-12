@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
+    <title>Update Mall</title>
+    <link rel="stylesheet" href="/css/center-card.css">
+</head>
+<body>
+<div class="card-container">
+    <div class="card">
+        <h2 class="text-center mb-4">Update Mall</h2>
+
+        <form th:action="@{/malls/update/{id}(id=${id})}" method="post" th:object="${createMallDto}">
+            <div class="mb-3">
+                <label class="form-label" for="name">Mall Name:</label>
+                <input class="form-control" type="text" id="name" th:field="*{name}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="address">Address:</label>
+                <input class="form-control" type="text" id="address" th:field="*{address}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="floors">Floors:</label>
+                <input class="form-control" type="number" min="1" step="1" id="floors" th:field="*{floors}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('floors')}" th:errors="*{floors}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="description">Description:</label>
+                <textarea th:field="*{description}" id="description" class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3" th:if="${not #lists.isEmpty(mallOwners)}">
+                <label class="form-label" for="manager">Select Owner:</label>
+                <select class="form-select" id="manager" th:field="*{ownerId}" required>
+                    <option th:each="owner : ${mallOwners}"
+                            th:selected="${owner.id.equals(createMallDto.ownerId)}"
+                            th:value="${owner.id}"
+                            th:text="${owner.fullname} + ' (' + ${owner.email} + ')'">
+                    </option>
+                </select>
+            </div>
+
+            <div class="d-flex">
+                <button type="submit" class="btn btn-primary w-50">Save</button>
+                <a th:href="@{/malls}" class="btn btn-outline-danger w-50 ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

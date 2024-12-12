@@ -9,7 +9,13 @@ import org.springframework.data.domain.Pageable;
 
 public interface MallService {
     void createMall(CreateMallDto createMallDto);
+
     Page<DisplayMallDto> getAll(Pageable pageable);
+
     Mall getEntityById(String id);
+
     DetailsMallDto getDetailsById(String id);
+
+    CreateMallDto getCreateDtoById(String id);
+    void update(CreateMallDto createMallDto, String id);
 }
