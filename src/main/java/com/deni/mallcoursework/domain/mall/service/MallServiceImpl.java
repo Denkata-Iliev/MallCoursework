@@ -8,6 +8,7 @@ import com.deni.mallcoursework.domain.mall.mapper.MallMapper;
 import com.deni.mallcoursework.domain.mall.repository.MallRepository;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -81,11 +82,15 @@ public class MallServiceImpl implements MallService {
         mallRepository.save(mall);
     }
 
+    @Transactional
     @Override
     public void delete(String id) {
         if (!mallRepository.existsById(id)) {
             throw new ResourceNotFoundException(MALL, ID);
         }
+
+        // detach all managers from stores in one query
+        mallRepository.detachManagersByMallId(id);
 
         mallRepository.deleteById(id);
     }

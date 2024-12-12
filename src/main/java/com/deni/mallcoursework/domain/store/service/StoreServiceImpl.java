@@ -108,10 +108,13 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void delete(String id) {
-        if (!storeRepository.existsById(id)) {
-            throw new ResourceNotFoundException(STORE, ID);
-        }
+    public String delete(String id) {
+        var store = getStoreById(id);
+
+        // manually detaching manager from store,
+        // so the cascade deletion works correctly
+        store.getManager().setStore(null);
+        storeRepository.save(store);
 
         storeRepository.deleteById(id);
 

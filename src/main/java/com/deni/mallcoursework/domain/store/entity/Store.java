@@ -49,11 +49,4 @@ public class Store {
             orphanRemoval = true
     )
     private Set<Product> products;
-
-    @PreRemove
-    private void preRemove() {
-        // detach manager and store,
-        // so cascade delete works properly
-        manager.setStore(null);
-    }
 }
