@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
     <title>Stores</title>
-    <link rel="stylesheet" href="/css/stores-index.css" />
+    <link rel="stylesheet" href="/css/list-index.css" />
     <link rel="stylesheet" href="/css/pagination.css" />
 </head>
 <body>
@@ -23,11 +23,11 @@
        class="btn btn-primary mb-3 mt-3"
        sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Store</a>
 
-    <ul class="store-list">
-        <li class="store-item" th:each="store : ${stores}">
-            <div class="store-details">
-                <span class="store-name" th:text="${store.name}">Store Name</span>
-                <span class="store-floor" th:text="'Floor: ' + ${store.floorNumber}">Floor Number</span>
+    <ul class="list">
+        <li class="item" th:each="store : ${stores}">
+            <div class="item-details">
+                <span class="item-name" th:text="${store.name}">Store Name</span>
+                <span class="item-secondary-text" th:text="'Floor: ' + ${store.floorNumber}">Floor Number</span>
             </div>
 
             <div class="d-flex gap-2">
@@ -50,24 +50,7 @@
     </ul>
 </div>
 
-<nav class="mt-4" th:if="${!#lists.isEmpty(stores)}">
-    <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${page.hasPrevious()} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/stores(page=${page.number - 1})}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-            th:classappend="${page.number == i} ? 'active'">
-            <a class="page-link" th:href="@{/stores(page=${i})}" th:text="${i + 1}"></a>
-        </li>
-        <li class="page-item" th:classappend="${page.hasNext()} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/stores(page=${page.number + 1})}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+<nav th:replace="~{ base :: pagination('/stores', ${page})}"></nav>
 
 <th:block th:replace="~{base :: scripts}"></th:block>
 <script src="/js/confirmDeletion.js"></script>

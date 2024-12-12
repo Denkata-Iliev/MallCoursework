@@ -54,26 +54,9 @@
         </div>
     </div>
 
-    <!-- Pagination -->
-    <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${page.hasPrevious()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${page.number - 1})}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-                th:classappend="${page.number == i} ? 'active'">
-                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${i})}" th:text="${i + 1}"></a>
-            </li>
-            <li class="page-item" th:classappend="${page.hasNext()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${page.number + 1})}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 </div>
+
+<nav th:replace="~{ base :: pagination(@{/stores/{id}(id=${id})}, ${page}) }"></nav>
 
 <th:block th:replace="~{base :: scripts}"></th:block>
 <script src="/js/confirmDeletion.js"></script>
