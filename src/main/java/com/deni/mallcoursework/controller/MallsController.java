@@ -2,6 +2,7 @@ package com.deni.mallcoursework.controller;
 
 import com.deni.mallcoursework.domain.mall.dto.CreateMallDto;
 import com.deni.mallcoursework.domain.mall.service.MallService;
+import com.deni.mallcoursework.domain.store.service.StoreService;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
@@ -19,11 +20,13 @@ public class MallsController {
 
     private final MallService mallService;
     private final UserService userService;
+    private final StoreService storeService;
 
     @Autowired
-    public MallsController(MallService mallService, UserService userService) {
+    public MallsController(MallService mallService, UserService userService, StoreService storeService) {
         this.mallService = mallService;
         this.userService = userService;
+        this.storeService = storeService;
     }
 
     @GetMapping
@@ -54,6 +57,20 @@ public class MallsController {
 
         mallService.createMall(createMallDto);
         return "redirect:/malls";
+    }
+
+    @GetMapping("/{id}")
+    public String stores(@PathVariable String id,
+                         @RequestParam(name = "page", defaultValue = "0") int pageNum,
+                         @RequestParam(defaultValue = "5") int size,
+                         Model model) {
+        Pageable pageable = PageRequest.of(pageNum, size);
+        var page = storeService.getAll(pageable, id);
+
+        model.addAttribute("stores", page.getContent());
+        model.addAttribute("page", page);
+
+        return "malls/stores";
     }
 
     @GetMapping("/details/{id}")

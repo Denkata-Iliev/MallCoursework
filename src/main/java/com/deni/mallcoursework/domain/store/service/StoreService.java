@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface StoreService {
-    void create(CreateStoreDto createStoreDto);
+    void create(CreateStoreDto createStoreDto, String mallId);
 
-    Page<DisplayStoreDto> getAll(Pageable pageable);
+    Page<DisplayStoreDto> getAll(Pageable pageable, String mallId);
 
     DetailsStoreDto getDetailsById(String id);
 
@@ -18,7 +18,7 @@ public interface StoreService {
 
     CreateStoreDto getCreateDtoById(String id);
 
-    void update(CreateStoreDto createStoreDto, String id);
+    String update(CreateStoreDto createStoreDto, String id);
 
-    void delete(String id);
+    String delete(String id);
 }

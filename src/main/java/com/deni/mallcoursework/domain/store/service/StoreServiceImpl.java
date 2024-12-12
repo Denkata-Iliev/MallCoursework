@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.store.service;
 
+import com.deni.mallcoursework.domain.mall.service.MallService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DetailsStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
@@ -20,29 +21,33 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final StoreMapper storeMapper;
     private final UserService userService;
+    private final MallService mallService;
 
     public StoreServiceImpl(StoreRepository storeRepository,
                             StoreMapper storeMapper,
-                            UserService userService) {
+                            UserService userService, MallService mallService) {
         this.storeRepository = storeRepository;
         this.storeMapper = storeMapper;
         this.userService = userService;
+        this.mallService = mallService;
     }
 
     @Override
-    public void create(CreateStoreDto createStoreDto) {
+    public void create(CreateStoreDto createStoreDto, String mallId) {
         var store = storeMapper.fromCreateDto(createStoreDto);
         var manager = userService.getUserById(createStoreDto.getManagerId());
+        var mall = mallService.getEntityById(mallId);
 
         store.setManager(manager);
         manager.setStore(store);
+        store.setMall(mall);
 
         storeRepository.save(store);
     }
 
     @Override
-    public Page<DisplayStoreDto> getAll(Pageable pageable) {
-        return storeRepository.findAll(pageable)
+    public Page<DisplayStoreDto> getAll(Pageable pageable, String mallId) {
+        return storeRepository.findAllByMall_Id(mallId, pageable)
                 .map(storeMapper::toDisplayStoreDto);
     }
 
@@ -65,7 +70,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void update(CreateStoreDto createStoreDto, String id) {
+    public String update(CreateStoreDto createStoreDto, String id) {
         var store = getStoreById(id);
 
         storeMapper.update(createStoreDto, store);
@@ -76,7 +81,7 @@ public class StoreServiceImpl implements StoreService {
         String newManagerId = createStoreDto.getManagerId();
         if (newManagerId == null) {
             storeRepository.save(store);
-            return;
+            return store.getMall().getId();
         }
 
         String oldManagerId = store.getManager().getId();
@@ -84,7 +89,7 @@ public class StoreServiceImpl implements StoreService {
         // if no change in manager, just save
         if (oldManagerId.equals(newManagerId)) {
             storeRepository.save(store);
-            return;
+            return store.getMall().getId();
         }
 
         // if there is a change in managers, set the store of the old manager to null,
@@ -98,6 +103,8 @@ public class StoreServiceImpl implements StoreService {
         store.setManager(newManager);
         newManager.setStore(store);
         storeRepository.save(store);
+
+        return store.getMall().getId();
     }
 
     @Override
@@ -107,6 +114,8 @@ public class StoreServiceImpl implements StoreService {
         }
 
         storeRepository.deleteById(id);
+
+        return store.getMall().getId();
     }
 
     private Store getStoreById(String id) {

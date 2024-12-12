@@ -11,15 +11,15 @@
 
 <div th:if="${#lists.isEmpty(stores)}">
     <h1>Nothing to see here!</h1>
-    <a th:href="@{/stores/create}"
+    <a th:href="@{/stores/create/{id}(id=${id})}"
        class="btn btn-primary"
        sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Store</a>
 </div>
 
 <div class="container" th:if="${!#lists.isEmpty(stores)}">
-    <h1>All Stores</h1>
+    <h1>Our Stores</h1>
 
-    <a th:href="@{/stores/create}"
+    <a th:href="@{/stores/create/{id}(id=${id})}"
        class="btn btn-primary mb-3 mt-3"
        sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Store</a>
 
@@ -50,7 +50,7 @@
     </ul>
 </div>
 
-<nav th:replace="~{ base :: pagination('/stores', ${page})}"></nav>
+<nav th:replace="~{ base :: pagination(@{/malls/{id}(id=${id})}, ${page})}"></nav>
 
 <th:block th:replace="~{base :: scripts}"></th:block>
 <script src="/js/confirmDeletion.js"></script>
