@@ -1,6 +1,5 @@
 package com.deni.mallcoursework.domain.store.service;
 
-import com.cloudinary.Cloudinary;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DetailsStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
@@ -21,16 +20,13 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final StoreMapper storeMapper;
     private final UserService userService;
-    private final Cloudinary cloudinary;
 
     public StoreServiceImpl(StoreRepository storeRepository,
                             StoreMapper storeMapper,
-                            UserService userService,
-                            Cloudinary cloudinary) {
+                            UserService userService) {
         this.storeRepository = storeRepository;
         this.storeMapper = storeMapper;
         this.userService = userService;
-        this.cloudinary = cloudinary;
     }
 
     @Override
@@ -106,13 +102,9 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public void delete(String id) {
-        var store = getStoreById(id);
-
-        // manually detaching manager from store,
-        // so the cascade deletion works correctly
-        var manager = userService.getUserById(store.getManager().getId());
-        manager.setStore(null);
-        storeRepository.save(store);
+        if (!storeRepository.existsById(id)) {
+            throw new ResourceNotFoundException(STORE, ID);
+        }
 
         storeRepository.deleteById(id);
     }
@@ -120,13 +112,5 @@ public class StoreServiceImpl implements StoreService {
     private Store getStoreById(String id) {
         return storeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(STORE, ID));
-    }
-
-    private String getPublicId(String imageUrl) {
-        var lastSlash = imageUrl.lastIndexOf('/');
-        var lastDot = imageUrl.lastIndexOf('.');
-        var publicId = imageUrl.substring(lastSlash + 1, lastDot);
-
-        return publicId;
     }
 }
