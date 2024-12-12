@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
+  <title>Mall Details</title>
+  <link rel="stylesheet" href="/css/list-item-details.css">
+</head>
+<body>
+<nav th:replace="~{base :: navbar}"></nav>
+
+<div class="container mt-5">
+
+  <div class="card shadow-sm card-custom">
+    <div class="card-header card-header-custom bg-dark text-white text-center">
+      <h3 th:text="${mall.name}">Mall Name</h3>
+    </div>
+
+    <div class="card-body">
+      <p class="mb-2">
+        <strong>Address:</strong>
+        <span th:text="${mall.address}">Address</span>
+      </p>
+      <p class="mb-2">
+        <strong>Floors:</strong>
+        <span th:text="${mall.floors}">Floors</span>
+      </p>
+      <p class="mb-2">
+        <strong>Description:</strong>
+        <span th:text="${#strings.isEmpty(mall.description) ? 'N/A' : mall.description}">Description</span>
+      </p>
+
+      <hr>
+
+      <h5 class="mb-3">Owner Information</h5>
+      <ul class="list-unstyled">
+        <li>
+          <strong>Name:</strong>
+          <span th:text="${mall.owner.fullname}">Owner Name</span>
+        </li>
+
+        <li>
+          <strong>Email:</strong>
+          <span th:text="${mall.owner.email}">Owner Email</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="mt-4 text-center">
+    <a th:href="@{/malls}" class="btn btn-secondary">Back to Malls</a>
+  </div>
+</div>
+
+<th:block th:replace="~{base :: scripts}"></th:block>
+</body>
+</html>

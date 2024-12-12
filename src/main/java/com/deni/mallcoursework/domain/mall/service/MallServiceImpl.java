@@ -1,6 +1,7 @@
 package com.deni.mallcoursework.domain.mall.service;
 
 import com.deni.mallcoursework.domain.mall.dto.CreateMallDto;
+import com.deni.mallcoursework.domain.mall.dto.DetailsMallDto;
 import com.deni.mallcoursework.domain.mall.dto.DisplayMallDto;
 import com.deni.mallcoursework.domain.mall.entity.Mall;
 import com.deni.mallcoursework.domain.mall.mapper.MallMapper;
@@ -46,5 +47,12 @@ public class MallServiceImpl implements MallService {
     public Mall getEntityById(String id) {
         return mallRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Mall", "id"));
+    }
+
+    @Override
+    public DetailsMallDto getDetailsById(String id) {
+        var mall = getEntityById(id);
+
+        return mallMapper.toDetailsMallDto(mall);
     }
 }
