@@ -1,21 +1,17 @@
 package com.deni.mallcoursework.domain.store.service;
 
 import com.cloudinary.Cloudinary;
-import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DetailsStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
 import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.domain.store.mapper.StoreMapper;
 import com.deni.mallcoursework.domain.store.repository.StoreRepository;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.StringUtils;
-
-import java.io.IOException;
-import java.util.Map;
 
 @Service
 public class StoreServiceImpl implements StoreService {
@@ -117,20 +113,6 @@ public class StoreServiceImpl implements StoreService {
         var manager = userService.getUserById(store.getManager().getId());
         manager.setStore(null);
         storeRepository.save(store);
-
-        // deleting all product images from cloudinary
-        for (var product : store.getProducts()) {
-            var imageUrl = product.getImageUrl();
-            if (StringUtils.isEmptyOrWhitespace(imageUrl)) {
-                return;
-            }
-
-            try {
-                cloudinary.uploader().destroy(getPublicId(imageUrl), Map.of());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
 
         storeRepository.deleteById(id);
     }
