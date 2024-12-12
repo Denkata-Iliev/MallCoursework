@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setRole(Role.CLIENT);
+        user.setRole(Role.MALL_OWNER);
 
         repository.save(user);
     }
@@ -61,6 +61,14 @@ public class UserServiceImpl implements UserService {
         }
 
         return availableManagers
+                .stream()
+                .map(userMapper::toDisplayDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDisplayDto> getAllMallOwners() {
+        return repository.findAllByRole(Role.MALL_OWNER)
                 .stream()
                 .map(userMapper::toDisplayDto)
                 .collect(Collectors.toList());
