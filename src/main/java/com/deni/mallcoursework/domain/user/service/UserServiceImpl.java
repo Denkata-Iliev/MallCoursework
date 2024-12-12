@@ -1,6 +1,6 @@
 package com.deni.mallcoursework.domain.user.service;
 
-import com.deni.mallcoursework.domain.user.dto.ManagerDto;
+import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
 import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.user.mapper.UserMapper;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<ManagerDto> getAllManagers(String id) {
+    public List<UserDisplayDto> getAllManagers(String id) {
         var availableManagers = repository.findAllByRoleAndStoreIsNull(Role.MANAGER);
 
         if (id != null) {
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
         return availableManagers
                 .stream()
-                .map(userMapper::toManagerDto)
+                .map(userMapper::toDisplayDto)
                 .collect(Collectors.toList());
     }
 }

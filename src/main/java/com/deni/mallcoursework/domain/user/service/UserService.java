@@ -1,6 +1,6 @@
 package com.deni.mallcoursework.domain.user.service;
 
-import com.deni.mallcoursework.domain.user.dto.ManagerDto;
+import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
 import com.deni.mallcoursework.domain.user.entity.User;
 
@@ -11,5 +11,5 @@ public interface UserService {
 
     User getUserById(String id);
 
-    List<ManagerDto> getAllManagers(String id);
+    List<UserDisplayDto> getAllManagers(String id);
 }
