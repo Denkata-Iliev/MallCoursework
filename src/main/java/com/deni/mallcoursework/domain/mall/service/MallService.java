@@ -18,4 +18,6 @@ public interface MallService {
 
     CreateMallDto getCreateDtoById(String id);
     void update(CreateMallDto createMallDto, String id);
+
+    void delete(String id);
 }

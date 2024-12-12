@@ -99,4 +99,15 @@ public class MallsController {
             return "redirect:/error/404";
         }
     }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable String id) {
+        try {
+            mallService.delete(id);
+
+            return "redirect:/malls";
+        } catch (ResourceNotFoundException e) {
+            return "redirect:/error/404";
+        }
+    }
 }

@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MallServiceImpl implements MallService {
+    private static final String MALL = "Mall";
+    private static final String ID = "id";
 
     private final MallRepository mallRepository;
     private final MallMapper mallMapper;
@@ -46,7 +48,7 @@ public class MallServiceImpl implements MallService {
     @Override
     public Mall getEntityById(String id) {
         return mallRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Mall", "id"));
+                .orElseThrow(() -> new ResourceNotFoundException(MALL, ID));
     }
 
     @Override
@@ -77,5 +79,14 @@ public class MallServiceImpl implements MallService {
         }
 
         mallRepository.save(mall);
+    }
+
+    @Override
+    public void delete(String id) {
+        if (!mallRepository.existsById(id)) {
+            throw new ResourceNotFoundException(MALL, ID);
+        }
+
+        mallRepository.deleteById(id);
     }
 }
