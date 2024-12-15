@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setRole(Role.MALL_OWNER);
+        user.setRole(Role.CLIENT);
 
         repository.save(user);
     }
