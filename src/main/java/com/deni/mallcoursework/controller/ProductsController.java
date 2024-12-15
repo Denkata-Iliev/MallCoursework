@@ -33,13 +33,13 @@ public class ProductsController {
         }
     }
 
-    @PreAuthorize("@authorizationService.isAllowedToModifyProductsWithStoreId(#storeId)")
+    @PreAuthorize("@productExpression.isAllowedToModifyProductsWithStoreId(#storeId)")
     @GetMapping("/create/{storeId}")
     public String create(@PathVariable String storeId, CreateProductDto createProductDto) {
         return "products/create";
     }
 
-    @PreAuthorize("@authorizationService.isAllowedToModifyProductsWithStoreId(#storeId)")
+    @PreAuthorize("@productExpression.isAllowedToModifyProductsWithStoreId(#storeId)")
     @PostMapping("/create/{storeId}")
     public String create(@PathVariable String storeId,
                          @Valid CreateProductDto createProductDto,
@@ -54,7 +54,7 @@ public class ProductsController {
         return "redirect:/stores/" + storeId;
     }
 
-    @PreAuthorize("@authorizationService.isAllowedToModifyProductsWithId(#id)")
+    @PreAuthorize("@productExpression.isAllowedToModifyProductsWithId(#id)")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
@@ -67,7 +67,7 @@ public class ProductsController {
         }
     }
 
-    @PreAuthorize("@authorizationService.isAllowedToModifyProductsWithId(#id)")
+    @PreAuthorize("@productExpression.isAllowedToModifyProductsWithId(#id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateProductDto createProductDto,
@@ -88,7 +88,7 @@ public class ProductsController {
         return "redirect:/stores/" + storeId;
     }
 
-    @PreAuthorize("@authorizationService.isAllowedToModifyProductsWithId(#id)")
+    @PreAuthorize("@productExpression.isAllowedToModifyProductsWithId(#id)")
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         String storeId;

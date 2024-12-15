@@ -1,21 +1,17 @@
 package com.deni.mallcoursework.domain.store.service;
 
-import com.cloudinary.Cloudinary;
-import com.deni.mallcoursework.domain.user.service.UserService;
+import com.deni.mallcoursework.domain.mall.service.MallService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DetailsStoreDto;
 import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
 import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.domain.store.mapper.StoreMapper;
 import com.deni.mallcoursework.domain.store.repository.StoreRepository;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.StringUtils;
-
-import java.io.IOException;
-import java.util.Map;
 
 @Service
 public class StoreServiceImpl implements StoreService {
@@ -25,32 +21,33 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final StoreMapper storeMapper;
     private final UserService userService;
-    private final Cloudinary cloudinary;
+    private final MallService mallService;
 
     public StoreServiceImpl(StoreRepository storeRepository,
                             StoreMapper storeMapper,
-                            UserService userService,
-                            Cloudinary cloudinary) {
+                            UserService userService, MallService mallService) {
         this.storeRepository = storeRepository;
         this.storeMapper = storeMapper;
         this.userService = userService;
-        this.cloudinary = cloudinary;
+        this.mallService = mallService;
     }
 
     @Override
-    public void create(CreateStoreDto createStoreDto) {
+    public void create(CreateStoreDto createStoreDto, String mallId) {
         var store = storeMapper.fromCreateDto(createStoreDto);
         var manager = userService.getUserById(createStoreDto.getManagerId());
+        var mall = mallService.getEntityById(mallId);
 
         store.setManager(manager);
         manager.setStore(store);
+        store.setMall(mall);
 
         storeRepository.save(store);
     }
 
     @Override
-    public Page<DisplayStoreDto> getAll(Pageable pageable) {
-        return storeRepository.findAll(pageable)
+    public Page<DisplayStoreDto> getAll(Pageable pageable, String mallId) {
+        return storeRepository.findAllByMall_Id(mallId, pageable)
                 .map(storeMapper::toDisplayStoreDto);
     }
 
@@ -73,7 +70,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void update(CreateStoreDto createStoreDto, String id) {
+    public String update(CreateStoreDto createStoreDto, String id) {
         var store = getStoreById(id);
 
         storeMapper.update(createStoreDto, store);
@@ -84,7 +81,7 @@ public class StoreServiceImpl implements StoreService {
         String newManagerId = createStoreDto.getManagerId();
         if (newManagerId == null) {
             storeRepository.save(store);
-            return;
+            return store.getMall().getId();
         }
 
         String oldManagerId = store.getManager().getId();
@@ -92,7 +89,7 @@ public class StoreServiceImpl implements StoreService {
         // if no change in manager, just save
         if (oldManagerId.equals(newManagerId)) {
             storeRepository.save(store);
-            return;
+            return store.getMall().getId();
         }
 
         // if there is a change in managers, set the store of the old manager to null,
@@ -106,45 +103,26 @@ public class StoreServiceImpl implements StoreService {
         store.setManager(newManager);
         newManager.setStore(store);
         storeRepository.save(store);
+
+        return store.getMall().getId();
     }
 
     @Override
-    public void delete(String id) {
+    public String delete(String id) {
         var store = getStoreById(id);
 
         // manually detaching manager from store,
         // so the cascade deletion works correctly
-        var manager = userService.getUserById(store.getManager().getId());
-        manager.setStore(null);
+        store.getManager().setStore(null);
         storeRepository.save(store);
 
-        // deleting all product images from cloudinary
-        for (var product : store.getProducts()) {
-            var imageUrl = product.getImageUrl();
-            if (StringUtils.isEmptyOrWhitespace(imageUrl)) {
-                return;
-            }
-
-            try {
-                cloudinary.uploader().destroy(getPublicId(imageUrl), Map.of());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         storeRepository.deleteById(id);
+
+        return store.getMall().getId();
     }
 
     private Store getStoreById(String id) {
         return storeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(STORE, ID));
-    }
-
-    private String getPublicId(String imageUrl) {
-        var lastSlash = imageUrl.lastIndexOf('/');
-        var lastDot = imageUrl.lastIndexOf('.');
-        var publicId = imageUrl.substring(lastSlash + 1, lastDot);
-
-        return publicId;
     }
 }

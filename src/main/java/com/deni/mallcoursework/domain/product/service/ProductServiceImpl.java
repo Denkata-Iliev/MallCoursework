@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -130,16 +129,6 @@ public class ProductServiceImpl implements ProductService {
         var product = getProductById(id);
 
         productRepository.deleteById(id);
-        try {
-            var imageUrl = product.getImageUrl();
-            if (StringUtils.isEmptyOrWhitespace(imageUrl)) {
-                return product.getStore().getId();
-            }
-
-            cloudinary.uploader().destroy(getPublicId(imageUrl), Map.of());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         return product.getStore().getId();
     }

@@ -1,9 +1,9 @@
 package com.deni.mallcoursework.controller;
 
-import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.domain.product.service.ProductService;
 import com.deni.mallcoursework.domain.store.dto.CreateStoreDto;
 import com.deni.mallcoursework.domain.store.service.StoreService;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -25,19 +25,6 @@ public class StoresController {
         this.userService = userService;
         this.storeService = storeService;
         this.productService = productService;
-    }
-
-    @GetMapping
-    public String index(@RequestParam(name = "page", defaultValue = "0") int pageNum,
-                        @RequestParam(defaultValue = "5") int size,
-                        Model model) {
-        Pageable pageable = PageRequest.of(pageNum, size);
-        var page = storeService.getAll(pageable);
-
-        model.addAttribute("stores", page.getContent());
-        model.addAttribute("page", page);
-
-        return "stores/index";
     }
 
     @GetMapping("/{id}")
@@ -69,27 +56,30 @@ public class StoresController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
-    @GetMapping("/create")
-    public String create(Model model) {
-        model.addAttribute("createStoreDto", new CreateStoreDto());
+    @PreAuthorize("@storeExpression.isAllowedToCreateStore(#mallId)")
+    @GetMapping("/create/{mallId}")
+    public String create(@PathVariable String mallId, CreateStoreDto createStoreDto, Model model) {
         model.addAttribute("managers", userService.getAllManagers(null));
         return "stores/create";
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
-    @PostMapping("/create")
-    public String create(@Valid CreateStoreDto createStoreDto, BindingResult bindingResult, Model model) {
+    @PreAuthorize("@storeExpression.isAllowedToCreateStore(#mallId)")
+    @PostMapping("/create/{mallId}")
+    public String create(@PathVariable String mallId,
+                         @Valid CreateStoreDto createStoreDto,
+                         BindingResult bindingResult,
+                         Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("createStoreDto", createStoreDto);
+            model.addAttribute("managers", userService.getAllManagers(null));
             return "stores/create";
         }
 
-        storeService.create(createStoreDto);
-        return "redirect:/stores";
+        storeService.create(createStoreDto, mallId);
+        return "redirect:/malls/" + mallId;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER', 'ROLE_MANAGER')")
+    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id)")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
@@ -103,7 +93,7 @@ public class StoresController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER', 'ROLE_MANAGER')")
+    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateStoreDto createStoreDto,
@@ -111,24 +101,25 @@ public class StoresController {
                          Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("createStoreDto", createStoreDto);
+            model.addAttribute("managers", userService.getAllManagers(createStoreDto.getManagerId()));
+
             return "stores/update";
         }
 
         try {
-            storeService.update(createStoreDto, id);
+            var mallId = storeService.update(createStoreDto, id);
+            return "redirect:/malls/" + mallId;
         } catch (ResourceNotFoundException e) {
             return "redirect:/error/404";
         }
-
-        return "redirect:/stores";
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
+    @PreAuthorize("@storeExpression.isAllowedToDeleteOrChangeManagerOfStore(null, #id)")
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         try {
-            storeService.delete(id);
-            return "redirect:/stores";
+            var mallId = storeService.delete(id);
+            return "redirect:/malls/" + mallId;
         } catch (ResourceNotFoundException e) {
             return "redirect:/error/404";
         }

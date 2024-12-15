@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
+    <title>Malls</title>
+    <link rel="stylesheet" href="/css/list-index.css" />
+    <link rel="stylesheet" href="/css/pagination.css" />
+</head>
+<body>
+<nav th:replace="~{base :: navbar}"></nav>
+
+<div th:if="${#lists.isEmpty(malls)}">
+    <h1>Nothing to see here!</h1>
+    <a th:href="@{/malls/create}"
+       class="btn btn-primary"
+       sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
+</div>
+
+<div class="container" th:if="${!#lists.isEmpty(malls)}">
+    <h1>All Malls</h1>
+
+    <a th:href="@{/malls/create}"
+       class="btn btn-primary mb-3 mt-3"
+       sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
+
+    <ul class="list">
+        <li class="item" th:each="mall : ${malls}">
+            <div class="item-details">
+                <span class="item-name" th:text="${mall.name}">Mall Name</span>
+                <span class="item-secondary-text" th:text="'Address: ' + ${mall.address}">Address</span>
+                <span class="item-secondary-text" th:text="'Stores: ' + ${mall.storeCount}">Store Count</span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a th:href="@{/malls/{id}(id=${mall.id})}" class="btn btn-primary">View Stores</a>
+                <a th:href="@{/malls/details/{id}(id=${mall.id})}" class="btn btn-outline-primary">Details</a>
+
+                <a th:if="${@mallExpression.isAllowedToModifyMall(mall.id)}"
+                   th:href="@{/malls/update/{id}(id=${mall.id})}"
+                   class="btn btn-outline-success">Update</a>
+
+                <form th:if="${@mallExpression.isAllowedToModifyMall(mall.id)}"
+                      th:action="@{/malls/delete/{id}(id=${mall.id})}"
+                      method="post"
+                      onsubmit="return confirmDeletion('mall')"
+                >
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div th:replace="~{ base :: pagination('/malls', ${page})}"></div>
+
+<th:block th:replace="~{base :: scripts}"></th:block>
+<script src="/js/confirmDeletion.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+CREATE TABLE malls(
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    floors INT NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NULL,
+    owner_id VARCHAR(255) NOT NULL,
+    CONSTRAINT FOREIGN KEY (owner_id) REFERENCES users(id)
+);
+
+ALTER TABLE stores
+ADD COLUMN mall_id VARCHAR(255) NOT NULL,
+ADD CONSTRAINT FOREIGN KEY (mall_id) REFERENCES malls(id);

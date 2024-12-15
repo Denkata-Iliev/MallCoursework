@@ -1,34 +1,30 @@
-package com.deni.mallcoursework.infrastructure.security;
+package com.deni.mallcoursework.infrastructure.security.expressions;
 
-import com.deni.mallcoursework.domain.user.entity.Role;
-import com.deni.mallcoursework.domain.user.entity.User;
-import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.domain.product.service.ProductService;
+import com.deni.mallcoursework.domain.user.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthorizationService {
-    private final UserService userService;
+public class ProductExpression {
+    private final BaseExpression baseExpression;
     private final ProductService productService;
 
     @Autowired
-    public AuthorizationService(UserService userService, ProductService productService) {
-        this.userService = userService;
+    public ProductExpression(BaseExpression baseExpression, ProductService productService) {
+        this.baseExpression = baseExpression;
         this.productService = productService;
     }
 
     public boolean isAllowedToModifyProductsWithId(String productId) {
-        var authentication = getAuthentication();
+        var authentication = baseExpression.getAuthentication();
 
         if (authentication == null) {
             return false;
         }
 
-        if (isAdmin(authentication)) {
+        if (baseExpression.isAdmin(authentication)) {
             return true;
         }
 
@@ -43,13 +39,13 @@ public class AuthorizationService {
     }
 
     public boolean isAllowedToModifyProductsWithStoreId(String storeId) {
-        var authentication = getAuthentication();
+        var authentication = baseExpression.getAuthentication();
 
         if (authentication == null) {
             return false;
         }
 
-        if (isAdmin(authentication)) {
+        if (baseExpression.isAdmin(authentication)) {
             return true;
         }
 
@@ -61,7 +57,7 @@ public class AuthorizationService {
     }
 
     private boolean isRoleOfStore(Authentication authentication, String storeId, Role role) {
-        var user = getUser(authentication);
+        var user = baseExpression.getUser(authentication);
 
         if (user.getStore() == null) {
             return false;
@@ -69,25 +65,5 @@ public class AuthorizationService {
 
         String userStoreId = user.getStore().getId();
         return userStoreId.equals(storeId) && user.getRole().equals(role);
-    }
-
-    private boolean isAdmin(Authentication authentication) {
-        return authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
-    }
-
-    private User getUser(Authentication authentication) {
-        var mallUserDetails = (MallUserDetails) authentication.getPrincipal();
-
-        return userService.getUserById(mallUserDetails.getId());
-    }
-
-    private static Authentication getAuthentication() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication.getName().equals("anonymousUser")) {
-            return null;
-        }
-
-        return authentication;
     }
 }

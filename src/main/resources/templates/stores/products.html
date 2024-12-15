@@ -11,7 +11,7 @@
 <div class="container mt-5" th:if="${#lists.isEmpty(products)}">
     <h1 class="text-center mb-4">Nothing to see here!</h1>
 
-    <a th:if="${@authorizationService.isAllowedToModifyProductsWithStoreId(id)}"
+    <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
        th:href="@{/products/create/{storeId}(storeId=${id})}"
        class="btn btn-primary mb-3 p-2">Create Product</a>
 </div>
@@ -19,7 +19,7 @@
 <div class="container mt-5" th:if="${!#lists.isEmpty(products)}">
     <h1 class="text-center mb-4">Our Products</h1>
 
-    <a th:if="${@authorizationService.isAllowedToModifyProductsWithStoreId(id)}"
+    <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
        th:href="@{/products/create/{storeId}(storeId=${id})}"
        class="btn btn-primary mb-3 p-2">Create Product</a>
 
@@ -36,11 +36,11 @@
                     <div class="d-flex gap-2">
                         <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-outline-primary">Details</a>
 
-                        <a th:if="${@authorizationService.isAllowedToModifyProductsWithStoreId(id)}"
+                        <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
                            th:href="@{/products/update/{id}(id=${product.id})}"
                            class="btn btn-outline-success">Update</a>
 
-                        <form th:if="${@authorizationService.isAllowedToModifyProductsWithStoreId(id)}"
+                        <form th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
                               th:action="@{/products/delete/{id}(id=${product.id})}"
                               method="post"
                               class="d-flex justify-content-end w-100"
@@ -54,26 +54,9 @@
         </div>
     </div>
 
-    <!-- Pagination -->
-    <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${page.hasPrevious()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${page.number - 1})}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-                th:classappend="${page.number == i} ? 'active'">
-                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${i})}" th:text="${i + 1}"></a>
-            </li>
-            <li class="page-item" th:classappend="${page.hasNext()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/stores/{id}(id=${id}, page=${page.number + 1})}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 </div>
+
+<nav th:replace="~{ base :: pagination(@{/stores/{id}(id=${id})}, ${page}) }"></nav>
 
 <th:block th:replace="~{base :: scripts}"></th:block>
 <script src="/js/confirmDeletion.js"></script>

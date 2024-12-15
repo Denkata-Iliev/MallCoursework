@@ -1,6 +1,6 @@
 package com.deni.mallcoursework.domain.store.dto;
 
-import com.deni.mallcoursework.domain.user.dto.ManagerDto;
+import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +10,6 @@ public final class DetailsStoreDto {
     private String id;
     private String name;
     private Integer floorNumber;
-    private ManagerDto manager;
+    private UserDisplayDto manager;
+    private String mallId;
 }

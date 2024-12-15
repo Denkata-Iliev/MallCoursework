@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.user.entity;
 
+import com.deni.mallcoursework.domain.mall.entity.Mall;
 import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.util.Constants;
 import jakarta.persistence.*;
@@ -8,6 +9,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Entity(name = "users")
 @Getter
@@ -44,4 +47,11 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "store_id")
     private Store store;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "owner",
+            orphanRemoval = true
+    )
+    private Set<Mall> malls;
 }

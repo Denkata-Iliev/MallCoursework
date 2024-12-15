@@ -15,6 +15,7 @@ public interface StoreMapper {
 
     DisplayStoreDto toDisplayStoreDto(Store store);
 
+    @Mapping(source = "store.mall.id", target = "mallId")
     DetailsStoreDto toDetailsStoreDto(Store store);
 
     @Mapping(source = "store.manager.id", target = "managerId")
