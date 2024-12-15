@@ -13,7 +13,7 @@
     <h1>Nothing to see here!</h1>
     <a th:href="@{/malls/create}"
        class="btn btn-primary"
-       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Mall</a>
+       sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
 </div>
 
 <div class="container" th:if="${!#lists.isEmpty(malls)}">
@@ -21,7 +21,7 @@
 
     <a th:href="@{/malls/create}"
        class="btn btn-primary mb-3 mt-3"
-       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Mall</a>
+       sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
 
     <ul class="list">
         <li class="item" th:each="mall : ${malls}">
@@ -35,11 +35,11 @@
                 <a th:href="@{/malls/{id}(id=${mall.id})}" class="btn btn-primary">View Stores</a>
                 <a th:href="@{/malls/details/{id}(id=${mall.id})}" class="btn btn-outline-primary">Details</a>
 
-                <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')"
+                <a th:if="${@authorizationService.isAllowedToModifyMall(mall.id)}"
                    th:href="@{/malls/update/{id}(id=${mall.id})}"
                    class="btn btn-outline-success">Update</a>
 
-                <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')"
+                <form th:if="${@authorizationService.isAllowedToModifyMall(mall.id)}"
                       th:action="@{/malls/delete/{id}(id=${mall.id})}"
                       method="post"
                       onsubmit="return confirmDeletion('mall')"

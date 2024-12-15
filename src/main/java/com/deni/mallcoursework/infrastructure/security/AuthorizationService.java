@@ -1,10 +1,12 @@
 package com.deni.mallcoursework.infrastructure.security;
 
+import com.deni.mallcoursework.domain.mall.service.MallService;
 import com.deni.mallcoursework.domain.user.entity.Role;
 import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.domain.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,11 +16,39 @@ import org.springframework.stereotype.Service;
 public class AuthorizationService {
     private final UserService userService;
     private final ProductService productService;
+    private final MallService mallService;
 
     @Autowired
-    public AuthorizationService(UserService userService, ProductService productService) {
+    public AuthorizationService(UserService userService, ProductService productService, MallService mallService) {
         this.userService = userService;
         this.productService = productService;
+        this.mallService = mallService;
+    }
+
+    public boolean isAllowedToModifyMall(String mallId) {
+        var authentication = getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        if (isAdmin(authentication)) {
+            return true;
+        }
+
+        var currentUser = getUser(authentication);
+
+        if (!currentUser.getRole().equals(Role.MALL_OWNER)) {
+            return false;
+        }
+
+        var mall = mallService.getEntityById(mallId);
+        var ownerId = mall.getOwner().getId();
+        if (!ownerId.equals(currentUser.getId())) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isAllowedToModifyProductsWithId(String productId) {

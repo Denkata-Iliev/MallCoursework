@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
   <title>Mall Details</title>
   <link rel="stylesheet" href="/css/list-item-details.css">
@@ -45,11 +46,27 @@
     </div>
   </div>
 
-  <div class="mt-4 text-center">
+  <div class="mt-4 d-flex justify-content-center gap-2">
     <a th:href="@{/malls}" class="btn btn-secondary">Back to Malls</a>
+
+    <a th:href="@{/malls/update/{id}(id=${id})}"
+       class="btn btn-outline-success"
+       th:if="${@authorizationService.isAllowedToModifyMall(id)}"
+    >
+      Update
+    </a>
+
+    <form th:action="@{/malls/delete/{id}(id=${id})}"
+          method="post"
+          th:if="${@authorizationService.isAllowedToModifyMall(id)}"
+          onsubmit="return confirmDeletion('mall')"
+    >
+      <button type="submit" class="btn btn-outline-danger">Delete</button>
+    </form>
   </div>
 </div>
 
 <th:block th:replace="~{base :: scripts}"></th:block>
+<script src="/js/confirmDeletion.js"></script>
 </body>
 </html>

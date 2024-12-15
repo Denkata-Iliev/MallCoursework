@@ -53,5 +53,5 @@ public class User {
             mappedBy = "owner",
             orphanRemoval = true
     )
-    private Set<Mall> mall;
+    private Set<Mall> malls;
 }

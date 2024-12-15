@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,12 +43,14 @@ public class MallsController {
         return "malls/index";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/create")
     public String create(CreateMallDto createMallDto, Model model) {
         model.addAttribute("mallOwners", userService.getAllMallOwners());
         return "malls/create";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/create")
     public String create(@Valid CreateMallDto createMallDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -83,6 +86,7 @@ public class MallsController {
         }
     }
 
+    @PreAuthorize("@authorizationService.isAllowedToModifyMall(#id)")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
@@ -98,6 +102,7 @@ public class MallsController {
         }
     }
 
+    @PreAuthorize("@authorizationService.isAllowedToModifyMall(#id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateMallDto createMallDto,
@@ -117,6 +122,7 @@ public class MallsController {
         }
     }
 
+    @PreAuthorize("@authorizationService.isAllowedToModifyMall(#id)")
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         try {
