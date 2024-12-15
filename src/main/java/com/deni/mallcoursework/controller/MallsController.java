@@ -86,7 +86,7 @@ public class MallsController {
         }
     }
 
-    @PreAuthorize("@authorizationService.isAllowedToModifyMall(#id)")
+    @PreAuthorize("@mallExpression.isAllowedToModifyMall(#id)")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
@@ -102,7 +102,7 @@ public class MallsController {
         }
     }
 
-    @PreAuthorize("@authorizationService.isAllowedToModifyMall(#id)")
+    @PreAuthorize("@mallExpression.isAllowedToModifyMall(#id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateMallDto createMallDto,
@@ -122,7 +122,7 @@ public class MallsController {
         }
     }
 
-    @PreAuthorize("@authorizationService.isAllowedToModifyMall(#id)")
+    @PreAuthorize("@mallExpression.isAllowedToModifyMall(#id)")
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         try {

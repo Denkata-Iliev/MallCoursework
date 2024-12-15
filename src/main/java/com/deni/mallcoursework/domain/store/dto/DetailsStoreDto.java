@@ -11,4 +11,5 @@ public final class DetailsStoreDto {
     private String name;
     private Integer floorNumber;
     private UserDisplayDto manager;
+    private String mallId;
 }

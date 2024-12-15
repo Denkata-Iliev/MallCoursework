@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
     <title>Stores</title>
     <link rel="stylesheet" href="/css/list-index.css" />
@@ -13,7 +12,7 @@
     <h1>Nothing to see here!</h1>
     <a th:href="@{/stores/create/{id}(id=${id})}"
        class="btn btn-primary"
-       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Store</a>
+       th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
 </div>
 
 <div class="container" th:if="${!#lists.isEmpty(stores)}">
@@ -21,7 +20,7 @@
 
     <a th:href="@{/stores/create/{id}(id=${id})}"
        class="btn btn-primary mb-3 mt-3"
-       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')">Create Store</a>
+       th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
 
     <ul class="list">
         <li class="item" th:each="store : ${stores}">
@@ -34,11 +33,11 @@
                 <a th:href="@{/stores/{id}(id=${store.id})}" class="btn btn-primary">View Products</a>
                 <a th:href="@{/stores/details/{id}(id=${store.id})}" class="btn btn-outline-primary">Details</a>
 
-                <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_MALL_OWNER')"
+                <a th:if="${@storeExpression.isAllowedToUpdateStore(store.id)}"
                    th:href="@{/stores/update/{id}(id=${store.id})}"
                    class="btn btn-outline-success">Update</a>
 
-                <form sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')"
+                <form th:if="${@storeExpression.isAllowedToDeleteOrChangeManagerOfStore(id, store.id)}"
                       th:action="@{/stores/delete/{id}(id=${store.id})}"
                       method="post"
                       onsubmit="return confirmDeletion('store')"

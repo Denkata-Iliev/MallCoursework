@@ -56,14 +56,14 @@ public class StoresController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
+    @PreAuthorize("@storeExpression.isAllowedToCreateStore(#mallId)")
     @GetMapping("/create/{mallId}")
     public String create(@PathVariable String mallId, CreateStoreDto createStoreDto, Model model) {
         model.addAttribute("managers", userService.getAllManagers(null));
         return "stores/create";
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
+    @PreAuthorize("@storeExpression.isAllowedToCreateStore(#mallId)")
     @PostMapping("/create/{mallId}")
     public String create(@PathVariable String mallId,
                          @Valid CreateStoreDto createStoreDto,
@@ -79,7 +79,7 @@ public class StoresController {
         return "redirect:/malls/" + mallId;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER', 'ROLE_MANAGER')")
+    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id)")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
@@ -93,7 +93,7 @@ public class StoresController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER', 'ROLE_MANAGER')")
+    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateStoreDto createStoreDto,
@@ -114,7 +114,7 @@ public class StoresController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MALL_OWNER')")
+    @PreAuthorize("@storeExpression.isAllowedToDeleteOrChangeManagerOfStore(null, #id)")
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         try {

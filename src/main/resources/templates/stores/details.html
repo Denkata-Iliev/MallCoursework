@@ -37,11 +37,27 @@
         </div>
     </div>
 
-    <div class="mt-4 text-center">
-        <a th:href="@{/stores}" class="btn btn-secondary">Back to Stores</a>
+    <div class="mt-4 d-flex justify-content-center gap-2">
+        <a th:href="@{/malls/{id}(id=${store.mallId})}" class="btn btn-secondary">Back to Stores</a>
+
+        <a th:href="@{/stores/update/{id}(id=${id})}"
+           class="btn btn-outline-success"
+           th:if="${@storeExpression.isAllowedToUpdateStore(id)}"
+        >
+            Update
+        </a>
+
+        <form th:action="@{/stores/delete/{id}(id=${id})}"
+              method="post"
+              th:if="${@storeExpression.isAllowedToDeleteOrChangeManagerOfStore(store.mallId, id)}"
+              onsubmit="return confirmDeletion('store')"
+        >
+            <button type="submit" class="btn btn-outline-danger">Delete</button>
+        </form>
     </div>
 </div>
 
 <th:block th:replace="~{base :: scripts}"></th:block>
+<script src="/js/confirmDeletion.js"></script>
 </body>
 </html>

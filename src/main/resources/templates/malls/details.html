@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
   <title>Mall Details</title>
   <link rel="stylesheet" href="/css/list-item-details.css">
@@ -51,14 +50,14 @@
 
     <a th:href="@{/malls/update/{id}(id=${id})}"
        class="btn btn-outline-success"
-       th:if="${@authorizationService.isAllowedToModifyMall(id)}"
+       th:if="${@mallExpression.isAllowedToModifyMall(id)}"
     >
       Update
     </a>
 
     <form th:action="@{/malls/delete/{id}(id=${id})}"
           method="post"
-          th:if="${@authorizationService.isAllowedToModifyMall(id)}"
+          th:if="${@mallExpression.isAllowedToModifyMall(id)}"
           onsubmit="return confirmDeletion('mall')"
     >
       <button type="submit" class="btn btn-outline-danger">Delete</button>
