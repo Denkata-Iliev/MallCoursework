@@ -1,4 +1,4 @@
-package com.deni.mallcoursework.infrastructure.security.expressions;
+package com.deni.mallcoursework.infrastructure.security.expression;
 
 import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.user.service.UserService;

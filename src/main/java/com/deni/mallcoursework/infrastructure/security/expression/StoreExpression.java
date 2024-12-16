@@ -1,4 +1,4 @@
-package com.deni.mallcoursework.infrastructure.security.expressions;
+package com.deni.mallcoursework.infrastructure.security.expression;
 
 import com.deni.mallcoursework.domain.mall.entity.Mall;
 import com.deni.mallcoursework.domain.mall.service.MallService;
@@ -19,6 +19,27 @@ public class StoreExpression {
         this.baseExpression = baseExpression;
         this.mallService = mallService;
         this.storeService = storeService;
+    }
+
+    public boolean isAllowedToCreateEmployee(String storeId) {
+        var authentication = baseExpression.getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        if (baseExpression.isAdmin(authentication)) {
+            return true;
+        }
+
+        var currentUser = baseExpression.getUser(authentication);
+        var store = storeService.getById(storeId);
+        var storeManager = store.getManager();
+        if (!currentUser.getId().equals(storeManager.getId())) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isAllowedToCreateStore(String mallId) {
