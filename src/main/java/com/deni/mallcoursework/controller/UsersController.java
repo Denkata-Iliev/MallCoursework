@@ -5,13 +5,12 @@ import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.StringUtils;
 
 @Controller
 @RequestMapping("/users")
@@ -23,14 +22,20 @@ public class UsersController {
         this.userService = userService;
     }
 
+    @PreAuthorize("@userExpression.canCreateUser(#role)")
     @GetMapping("/create")
-    public String create(@RequestParam String role, @RequestParam String returnUrl, RegisterDto registerDto) {
+    public String create(@RequestParam String role,
+                         @RequestParam String returnUrl,
+                         @RequestParam(required = false) String storeId,
+                         RegisterDto registerDto) {
         return "users/create";
     }
 
+    @PreAuthorize("@userExpression.canCreateUser(#role)")
     @PostMapping("/create")
     public String create(@RequestParam String role,
                          @RequestParam String returnUrl,
+                         @RequestParam(required = false) String storeId,
                          @Valid RegisterDto registerDto,
                          BindingResult bindingResult,
                          Model model) {
@@ -40,6 +45,11 @@ public class UsersController {
         }
 
         try {
+            if (!StringUtils.isEmptyOrWhitespace(storeId)) {
+                userService.registerEmployee(registerDto, storeId);
+                return "redirect:/" + returnUrl;
+            }
+
             userService.register(registerDto, role);
             return "redirect:/" + returnUrl;
         } catch (ConflictException e) {

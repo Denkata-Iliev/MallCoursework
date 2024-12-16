@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.user.service;
 
+import com.deni.mallcoursework.domain.store.service.StoreService;
 import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
 import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.user.mapper.UserMapper;
@@ -9,6 +10,7 @@ import com.deni.mallcoursework.domain.user.repository.UserRepository;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +23,17 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final StoreService storeService;
 
     @Autowired
-    public UserServiceImpl(UserMapper userMapper, UserRepository repository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserMapper userMapper,
+                           UserRepository repository,
+                           PasswordEncoder passwordEncoder,
+                           @Lazy StoreService storeService) {
         this.userMapper = userMapper;
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.storeService = storeService;
     }
 
     @Override
@@ -41,6 +48,17 @@ public class UserServiceImpl implements UserService {
     public void register(RegisterDto registerDto, String role) {
         var user = validateUserEncodePassword(registerDto);
         user.setRole(Role.valueOf(role));
+
+        repository.save(user);
+    }
+
+    @Override
+    public void registerEmployee(RegisterDto registerDto, String storeId) {
+        var user = validateUserEncodePassword(registerDto);
+        user.setRole(Role.EMPLOYEE);
+
+        var store = storeService.getById(storeId);
+        user.setStore(store);
 
         repository.save(user);
     }

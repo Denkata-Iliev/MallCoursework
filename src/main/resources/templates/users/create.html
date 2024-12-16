@@ -8,7 +8,7 @@
 <div class="container card-container">
     <div class="card">
         <h2 class="text-center mb-4" th:text="'Create ' + ${param.role}">Create User</h2>
-        <form th:action="@{/users/create(role=${param.role}, returnUrl=${param.returnUrl})}"
+        <form th:action="@{/users/create(role=${param.role}, returnUrl=${param.returnUrl}, storeId=${param.storeId ?: null})}"
               th:object="${registerDto}"
               method="POST">
 

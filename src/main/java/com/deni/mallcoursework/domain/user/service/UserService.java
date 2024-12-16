@@ -11,6 +11,8 @@ public interface UserService {
 
     void register(RegisterDto registerDto, String role);
 
+    void registerEmployee(RegisterDto registerDto, String storeId);
+
     User getUserById(String id);
 
     List<UserDisplayDto> getAllManagers(String id);
