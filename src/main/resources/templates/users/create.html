@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
+    <title th:text="'Create ' + ${param.role}">Create User</title>
+    <link rel="stylesheet" href="/css/center-card.css">
+</head>
+<body>
+<div class="container card-container">
+    <div class="card">
+        <h2 class="text-center mb-4" th:text="'Create ' + ${param.role}">Create User</h2>
+        <form th:action="@{/users/create(role=${param.role}, returnUrl=${param.returnUrl})}"
+              th:object="${registerDto}"
+              method="POST">
+
+            <div class="mb-3">
+                <label for="fullname" class="form-label">Full Name</label>
+                <input type="text" th:field="*{fullname}" class="form-control" id="fullname" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" th:field="*{email}" class="form-control" id="email" name="email" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" th:field="*{password}" class="form-control" id="password" name="password" required>
+                <<span class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" th:field="*{phone}" class="form-control" id="phone" name="phone" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="role">Role:</label>
+                <input class="form-control" type="text" th:value="${param.role}" id="role" readonly>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3">
+                <button type="submit" class="btn btn-primary w-100">Create</button>
+                <a th:href="@{/{url}(url=${param.returnUrl})}" class="btn btn-outline-danger w-100">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

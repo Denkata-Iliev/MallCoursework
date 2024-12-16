@@ -19,9 +19,15 @@
 <div class="container" th:if="${!#lists.isEmpty(malls)}">
     <h1>All Malls</h1>
 
-    <a th:href="@{/malls/create}"
-       class="btn btn-primary mb-3 mt-3"
-       sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
+    <div class="d-flex">
+        <a th:href="@{/malls/create}"
+           class="btn btn-primary mb-3 mt-3"
+           sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
+
+        <a th:href="@{/users/create(role='MALL_OWNER', returnUrl='malls')}"
+           class="btn btn-primary mb-3 mt-3 ms-auto"
+           sec:authorize="hasRole('ROLE_ADMIN')">Create Mall Owner</a>
+    </div>
 
     <ul class="list">
         <li class="item" th:each="mall : ${malls}">

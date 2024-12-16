@@ -18,9 +18,15 @@
 <div class="container" th:if="${!#lists.isEmpty(stores)}">
     <h1>Our Stores</h1>
 
-    <a th:href="@{/stores/create/{id}(id=${id})}"
-       class="btn btn-primary mb-3 mt-3"
-       th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
+    <div class="d-flex">
+        <a th:href="@{/stores/create/{id}(id=${id})}"
+           class="btn btn-primary mb-3 mt-3"
+           th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
+
+        <a th:href="@{/users/create(role='MANAGER', returnUrl='malls/' + ${id})}"
+           class="btn btn-primary mb-3 mt-3 ms-auto"
+           th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Manager</a>
+    </div>
 
     <ul class="list">
         <li class="item" th:each="store : ${stores}">

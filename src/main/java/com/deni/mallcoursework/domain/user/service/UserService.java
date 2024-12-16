@@ -9,6 +9,8 @@ import java.util.List;
 public interface UserService {
     void register(RegisterDto registerDto);
 
+    void register(RegisterDto registerDto, String role);
+
     User getUserById(String id);
 
     List<UserDisplayDto> getAllManagers(String id);

@@ -31,17 +31,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(RegisterDto registerDto) {
-        var user = userMapper.fromRegisterDto(registerDto);
-        if (repository.existsByEmail(registerDto.getEmail())) {
-            throw new ConflictException("email");
-        }
-
-        if (repository.existsByPhone(registerDto.getPhone())) {
-            throw new ConflictException("phone");
-        }
-
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        var user = validateUserEncodePassword(registerDto);
         user.setRole(Role.CLIENT);
+
+        repository.save(user);
+    }
+
+    @Override
+    public void register(RegisterDto registerDto, String role) {
+        var user = validateUserEncodePassword(registerDto);
+        user.setRole(Role.valueOf(role));
 
         repository.save(user);
     }
@@ -72,5 +71,20 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(userMapper::toDisplayDto)
                 .collect(Collectors.toList());
+    }
+
+    private User validateUserEncodePassword(RegisterDto registerDto) {
+        var user = userMapper.fromRegisterDto(registerDto);
+
+        if (repository.existsByEmail(registerDto.getEmail())) {
+            throw new ConflictException("email");
+        }
+
+        if (repository.existsByPhone(registerDto.getPhone())) {
+            throw new ConflictException("phone");
+        }
+
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        return user;
     }
 }
