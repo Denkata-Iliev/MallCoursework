@@ -29,7 +29,10 @@
     <!-- Update Profile form -->
     <div th:class="'card mt-4 ' + ${updateFormOpen ? '' : 'hidden-form'}" id="profileFormContainer">
         <h4 class="text-center mb-3">Edit Profile</h4>
-        <form id="profileForm" th:action="@{/users/update/{id}(id=${user.id})}" th:object="${updateUserDto}" method="post">
+        <form id="profileForm"
+              th:action="@{/users/update/{id}(id=${user.id})}"
+              th:object="${updateUserDto}"
+              method="post">
 
             <div class="mb-3">
                 <label for="fullNameInput" class="form-label">Full Name</label>
@@ -59,7 +62,10 @@
     <!-- Change Password Form -->
     <div th:class="'card mt-4 ' + ${changePassFormOpen ? '' : 'hidden-form'}" id="changePassFormContainer">
         <h4 class="text-center mb-3">Change Password</h4>
-        <form id="changePassForm" th:action="@{/users/pass/{id}(id=${user.id})}" th:object="${changePassDto}">
+        <form id="changePassForm"
+              th:action="@{/users/change-password/{id}(id=${user.id})}"
+              th:object="${changePassDto}"
+              method="post">
 
             <div class="mb-3">
                 <label for="oldPassInput" class="form-label">Old Password</label>
@@ -75,7 +81,7 @@
 
             <div class="mb-3">
                 <label for="confirmNewPassInput" class="form-label">Confirm New Password</label>
-                <input type="tel" class="form-control" id="confirmNewPassInput" th:field="*{confNewPass}" required>
+                <input type="password" class="form-control" id="confirmNewPassInput" th:field="*{confNewPass}" required>
                 <span class="text-danger" th:if="${#fields.hasErrors('confNewPass')}" th:errors="*{confNewPass}"></span>
             </div>
 

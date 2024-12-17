@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.user.dto;
 
+import com.deni.mallcoursework.infrastructure.password.ConfirmPassword;
 import com.deni.mallcoursework.util.Constants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@ConfirmPassword
 public final class ChangePassDto {
 
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)

@@ -15,6 +15,21 @@ public class UserExpression {
         this.baseExpression = baseExpression;
     }
 
+    public boolean canUpdateInfo(String userId) {
+        var authentication = baseExpression.getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        var currentUser = baseExpression.getUser(authentication);
+        if (!currentUser.getId().equals(userId)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public boolean canCreateUser(String role) {
         boolean isInvalidRole = Arrays.stream(Role.values()).noneMatch(r -> r.name().equals(role));
 

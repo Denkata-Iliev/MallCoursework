@@ -1,6 +1,7 @@
 package com.deni.mallcoursework.domain.user.service;
 
 import com.deni.mallcoursework.domain.store.service.StoreService;
+import com.deni.mallcoursework.domain.user.dto.ChangePassDto;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
 import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
 import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
@@ -9,6 +10,7 @@ import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.user.mapper.UserMapper;
 import com.deni.mallcoursework.domain.user.repository.UserRepository;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
+import com.deni.mallcoursework.infrastructure.exception.PasswordMismatchException;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import com.deni.mallcoursework.infrastructure.security.MallUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +132,19 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(userMapper::toDisplayDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void changePassword(ChangePassDto changePassDto, String id) {
+        var user = getUserById(id);
+        if (!passwordEncoder.matches(changePassDto.getOldPass(), user.getPassword())) {
+            throw new PasswordMismatchException();
+        }
+
+        var encodedNewPassword = passwordEncoder.encode(changePassDto.getNewPass());
+        user.setPassword(encodedNewPassword);
+
+        repository.save(user);
     }
 
     private User validateUserEncodePassword(RegisterDto registerDto) {

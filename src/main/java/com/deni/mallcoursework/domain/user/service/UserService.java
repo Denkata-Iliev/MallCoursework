@@ -1,5 +1,6 @@
 package com.deni.mallcoursework.domain.user.service;
 
+import com.deni.mallcoursework.domain.user.dto.ChangePassDto;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
 import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
 import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
@@ -28,4 +29,6 @@ public interface UserService {
     List<UserDisplayDto> getAllManagers(String id);
 
     List<UserDisplayDto> getAllMallOwners();
+
+    void changePassword(ChangePassDto changePassDto, String id);
 }

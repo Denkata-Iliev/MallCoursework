@@ -3,8 +3,10 @@ package com.deni.mallcoursework.controller;
 import com.deni.mallcoursework.domain.user.dto.ChangePassDto;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
 import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
+import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
+import com.deni.mallcoursework.infrastructure.exception.PasswordMismatchException;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +30,17 @@ public class UsersController {
 
     @GetMapping("/profile")
     public String profile(Model model, Authentication authentication) {
-        var userDto = userService.getCurrentUser(authentication);
-        model.addAttribute("user", userDto);
+        var userDisplayDto = userService.getCurrentUser(authentication);
+        var updateUserDto = userService.getUpdateDto(userDisplayDto);
 
-        var updateUserDto = userService.getUpdateDto(userDto);
-        model.addAttribute("updateUserDto", updateUserDto);
+        addToModel(model,
+                updateUserDto,
+                userDisplayDto,
+                new ChangePassDto(),
+                false,
+                false
+        );
 
-        model.addAttribute("changePassDto", new ChangePassDto());
-
-        model.addAttribute("updateFormOpen", false);
-        model.addAttribute("changePassFormOpen", false);
 
         return "users/profile";
     }
@@ -78,17 +81,21 @@ public class UsersController {
         }
     }
 
+    @PreAuthorize("@userExpression.canUpdateInfo(#id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid UpdateUserDto updateUserDto,
                          BindingResult bindingResult,
                          Model model) {
+        var userDisplayDto = userService.getById(id);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("updateUserDto", updateUserDto);
-            model.addAttribute("changePassDto", new ChangePassDto());
-            model.addAttribute("user", userService.getById(id));
-            model.addAttribute("updateFormOpen", true);
-            model.addAttribute("changePassFormOpen", false);
+            addToModel(model,
+                    updateUserDto,
+                    userDisplayDto,
+                    new ChangePassDto(),
+                    true,
+                    false
+            );
 
             return "users/profile";
         }
@@ -101,13 +108,72 @@ public class UsersController {
             return "redirect:/error/404";
         } catch (ConflictException e) {
             bindingResult.rejectValue(e.getField(), "error.updateUserDto", e.getMessage());
-            model.addAttribute("updateUserDto", updateUserDto);
-            model.addAttribute("changePassDto", new ChangePassDto());
-            model.addAttribute("user", userService.getById(id));
-            model.addAttribute("updateFormOpen", true);
-            model.addAttribute("changePassFormOpen", false);
+            addToModel(model,
+                    updateUserDto,
+                    userDisplayDto,
+                    new ChangePassDto(),
+                    true,
+                    false
+            );
+
 
             return "users/profile";
         }
+    }
+
+    @PreAuthorize("@userExpression.canUpdateInfo(#id)")
+    @PostMapping("/change-password/{id}")
+    public String changePassword(@PathVariable String id,
+                                 @Valid ChangePassDto changePassDto,
+                                 BindingResult bindingResult,
+                                 Model model) {
+        if (bindingResult.hasErrors()) {
+            var userDisplayDto = userService.getById(id);
+            var updateUserDto = userService.getUpdateDto(userDisplayDto);
+            addToModel(model,
+                    updateUserDto,
+                    userDisplayDto,
+                    changePassDto,
+                    false,
+                    true
+            );
+
+            return "users/profile";
+        }
+
+        try {
+            userService.changePassword(changePassDto, id);
+
+            return "redirect:/users/profile";
+        } catch (ResourceNotFoundException e) {
+            return "redirect:/error/404";
+        } catch (PasswordMismatchException e) {
+            bindingResult.rejectValue("oldPass", "error.changePassDto", e.getMessage());
+
+            var userDisplayDto = userService.getById(id);
+            var updateUserDto = userService.getUpdateDto(userDisplayDto);
+            addToModel(model,
+                    updateUserDto,
+                    userDisplayDto,
+                    changePassDto,
+                    false,
+                    true
+            );
+
+            return "users/profile";
+        }
+    }
+
+    private void addToModel(Model model,
+                            UpdateUserDto updateUserDto,
+                            UserDisplayDto userDisplayDto,
+                            ChangePassDto changePassDto,
+                            boolean updateFormOpen,
+                            boolean changePassFormOpen) {
+        model.addAttribute("updateUserDto", updateUserDto);
+        model.addAttribute("user", userDisplayDto);
+        model.addAttribute("changePassDto", changePassDto);
+        model.addAttribute("updateFormOpen", updateFormOpen);
+        model.addAttribute("changePassFormOpen", changePassFormOpen);
     }
 }
