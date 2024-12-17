@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
     User findByEmail(String email);
+    User findByPhone(String phone);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
 

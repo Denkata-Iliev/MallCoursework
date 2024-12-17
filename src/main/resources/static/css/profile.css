@@ -1,0 +1,23 @@
+/* Custom Styles */
+.profile-picture {
+    width: 150px;
+    object-fit: cover;
+    border-radius: 50%; /* Make the image round */
+    border: 3px solid #dee2e6;
+}
+
+.profile-container {
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.hidden-form {
+    display: none;
+}
+
+.card {
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

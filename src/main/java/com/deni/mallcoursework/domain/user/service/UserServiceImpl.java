@@ -1,16 +1,19 @@
 package com.deni.mallcoursework.domain.user.service;
 
 import com.deni.mallcoursework.domain.store.service.StoreService;
+import com.deni.mallcoursework.domain.user.dto.RegisterDto;
+import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
 import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
+import com.deni.mallcoursework.domain.user.entity.Role;
 import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.user.mapper.UserMapper;
-import com.deni.mallcoursework.domain.user.dto.RegisterDto;
-import com.deni.mallcoursework.domain.user.entity.Role;
 import com.deni.mallcoursework.domain.user.repository.UserRepository;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
+import com.deni.mallcoursework.infrastructure.security.MallUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -64,9 +67,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDisplayDto getById(String id) {
+        var user = getUserById(id);
+
+        return userMapper.toDisplayDto(user);
+    }
+
+    @Override
     public User getUserById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id"));
+    }
+
+    @Override
+    public UserDisplayDto getCurrentUser(Authentication authentication) {
+        var userDetails = (MallUserDetails) authentication.getPrincipal();
+        var user = getUserById(userDetails.getId());
+
+        return userMapper.toDisplayDto(user);
+    }
+
+    @Override
+    public UpdateUserDto getUpdateDto(UserDisplayDto userDisplayDto) {
+        return userMapper.toUpdateDtoFromDisplayDto(userDisplayDto);
+    }
+
+    @Override
+    public void update(UpdateUserDto updateUserDto, String id) {
+        var user = getUserById(id);
+
+        var userByEmail = repository.findByEmail(updateUserDto.getEmail());
+        if (userByEmail != null && !user.getId().equals(userByEmail.getId())) {
+            throw new ConflictException("email");
+        }
+
+        var userByPhone = repository.findByPhone(updateUserDto.getPhone());
+        if (userByPhone != null && !user.getId().equals(userByPhone.getId())) {
+            throw new ConflictException("phone");
+        }
+
+        userMapper.update(updateUserDto, user);
+        repository.save(user);
     }
 
     @Override

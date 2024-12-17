@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{base :: base_head(~{::title}, ~{})}">
+<head th:replace="~{ base :: base_head(~{::title}, ~{}) }">
     <meta charset="UTF-8">
     <title>Home</title>
-    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
-<nav th:replace="~{base :: navbar}"></nav>
+<nav th:replace="~{ base :: navbar }"></nav>
 
-<th:block th:replace="~{base :: scripts}"></th:block>
+<th:block th:replace="~{ base :: scripts }"></th:block>
 </body>
 </html>

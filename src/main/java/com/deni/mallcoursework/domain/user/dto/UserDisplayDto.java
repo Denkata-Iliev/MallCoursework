@@ -9,4 +9,5 @@ public final class UserDisplayDto {
     private String id;
     private String fullname;
     private String email;
+    private String phone;
 }
