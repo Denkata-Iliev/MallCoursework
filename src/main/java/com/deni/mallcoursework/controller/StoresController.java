@@ -27,6 +27,14 @@ public class StoresController {
         this.productService = productService;
     }
 
+    @PreAuthorize("@storeExpression.worksAtStore()")
+    @GetMapping("/my-store")
+    public String myStore(Model model) {
+        var store = storeService.getStoreOfCurrentUser();
+        model.addAttribute("store", store);
+        return "stores/my-store";
+    }
+
     @GetMapping("/{id}")
     public String getById(@PathVariable String id,
                           @RequestParam(name = "page", defaultValue = "0") int pageNum,

@@ -11,6 +11,7 @@ import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,6 +61,16 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public Store getById(String id) {
         return getStoreById(id);
+    }
+
+    @Override
+    public DetailsStoreDto getStoreOfCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var currentUserDisplayDto = userService.getCurrentUser(authentication);
+        var currentUserEntity = userService.getUserById(currentUserDisplayDto.getId());
+        var store = getStoreById(currentUserEntity.getStore().getId());
+
+        return storeMapper.toDetailsStoreDto(store);
     }
 
     @Override

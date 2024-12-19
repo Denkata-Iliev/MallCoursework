@@ -16,6 +16,8 @@ public interface StoreService {
 
     Store getById(String id);
 
+    DetailsStoreDto getStoreOfCurrentUser();
+
     CreateStoreDto getCreateDtoById(String id);
 
     String update(CreateStoreDto createStoreDto, String id);

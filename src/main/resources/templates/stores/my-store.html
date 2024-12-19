@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
+    <title>Store Details</title>
+    <link rel="stylesheet" href="/css/list-item-details.css">
+</head>
+<body>
+<nav th:replace="~{base :: navbar}"></nav>
+
+<div class="container mt-5">
+
+    <div class="card shadow-sm card-custom">
+        <div class="card-header card-header-custom bg-dark text-white text-center">
+            <h3 th:text="${store.name}">Store Name</h3>
+        </div>
+
+        <div class="card-body">
+            <p class="mb-2">
+                <strong>Floor:</strong>
+                <span th:text="${store.floorNumber}">Floor Number</span>
+            </p>
+
+            <hr>
+
+            <h5 class="mb-3">Manager Information</h5>
+            <ul class="list-unstyled">
+                <li>
+                    <strong>Name:</strong>
+                    <span th:text="${store.manager.fullname}">Manager Name</span>
+                </li>
+
+                <li>
+                    <strong>Email:</strong>
+                    <span th:text="${store.manager.email}">Manager Email</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-center gap-2">
+        <a th:href="@{/stores/{id}(id=${store.id})}" class="btn btn-primary">View Products</a>
+
+        <a th:href="@{/stores/update/{id}(id=${store.id})}"
+           class="btn btn-outline-success"
+           th:if="${@storeExpression.isAllowedToUpdateStore(store.id)}"
+        >
+            Update
+        </a>
+
+        <form th:action="@{/stores/delete/{id}(id=${store.id})}"
+              method="post"
+              th:if="${@storeExpression.isAllowedToDeleteOrChangeManagerOfStore(store.mallId, store.id)}"
+              onsubmit="return confirmDeletion('store')"
+        >
+            <button type="submit" class="btn btn-outline-danger">Delete</button>
+        </form>
+    </div>
+</div>
+
+<th:block th:replace="~{base :: scripts}"></th:block>
+<script src="/js/confirmDeletion.js"></script>
+</body>
+</html>

@@ -21,6 +21,25 @@ public class StoreExpression {
         this.storeService = storeService;
     }
 
+    public boolean worksAtStore() {
+        var authentication = baseExpression.getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        var currentUser = baseExpression.getUser(authentication);
+        if (currentUser.getStore() == null) {
+            return false;
+        }
+
+        if (!currentUser.getRole().equals(Role.MANAGER) && !currentUser.getRole().equals(Role.EMPLOYEE)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public boolean isAllowedToCreateEmployee(String storeId) {
         var authentication = baseExpression.getAuthentication();
 
