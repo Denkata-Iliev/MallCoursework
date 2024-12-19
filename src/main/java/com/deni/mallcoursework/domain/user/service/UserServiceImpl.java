@@ -87,10 +87,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDisplayDto getCurrentUser(Authentication authentication) {
-        var userDetails = (MallUserDetails) authentication.getPrincipal();
-        var user = getEntityById(userDetails.getId());
+        var user = getCurrentUserEntity(authentication);
 
         return userMapper.toDisplayDto(user);
+    }
+
+    @Override
+    public User getCurrentUserEntity(Authentication authentication) {
+        var userDetails = (MallUserDetails) authentication.getPrincipal();
+
+        return getEntityById(userDetails.getId());
     }
 
     @Override

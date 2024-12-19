@@ -6,6 +6,7 @@ import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
 import com.deni.mallcoursework.domain.store.entity.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 public interface StoreService {
     void create(CreateStoreDto createStoreDto, String mallId);
@@ -16,7 +17,7 @@ public interface StoreService {
 
     Store getEntityById(String id);
 
-    DetailsStoreDto getStoreOfCurrentUser();
+    DetailsStoreDto getStoreOfCurrentUser(Authentication authentication);
 
     CreateStoreDto getCreateDtoById(String id);
 

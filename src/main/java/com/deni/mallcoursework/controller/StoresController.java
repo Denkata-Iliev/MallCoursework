@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,9 +30,10 @@ public class StoresController {
 
     @PreAuthorize("@storeExpression.worksAtStore()")
     @GetMapping("/my-store")
-    public String myStore(Model model) {
-        var store = storeService.getStoreOfCurrentUser();
+    public String myStore(Model model, Authentication authentication) {
+        var store = storeService.getStoreOfCurrentUser(authentication);
         model.addAttribute("store", store);
+
         return "stores/my-store";
     }
 

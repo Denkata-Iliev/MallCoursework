@@ -7,11 +7,14 @@ import com.deni.mallcoursework.domain.mall.entity.Mall;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 public interface MallService {
     void createMall(CreateMallDto createMallDto);
 
     Page<DisplayMallDto> getAll(Pageable pageable);
+
+    Page<DisplayMallDto> getMallsOfCurrentUser(Authentication authentication, Pageable pageable);
 
     Mall getEntityById(String id);
 

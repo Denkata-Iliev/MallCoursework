@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +29,21 @@ public class MallsController {
         this.mallService = mallService;
         this.userService = userService;
         this.storeService = storeService;
+    }
+
+    @PreAuthorize("hasRole('ROLE_MALL_OWNER')")
+    @GetMapping("/my-malls")
+    public String myMalls(@RequestParam(name = "page", defaultValue = "0") int pageNum,
+                          @RequestParam(defaultValue = "5") int size,
+                          Model model,
+                          Authentication authentication) {
+        Pageable pageable = PageRequest.of(pageNum, size);
+        var mallsPage = mallService.getMallsOfCurrentUser(authentication, pageable);
+
+        model.addAttribute("malls", mallsPage.getContent());
+        model.addAttribute("page", mallsPage);
+
+        return "malls/my-malls";
     }
 
     @GetMapping

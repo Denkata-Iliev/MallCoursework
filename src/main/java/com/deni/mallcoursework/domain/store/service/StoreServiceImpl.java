@@ -11,7 +11,7 @@ import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,7 +48,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Page<DisplayStoreDto> getAll(Pageable pageable, String mallId) {
-        return storeRepository.findAllByMall_Id(mallId, pageable)
+        return storeRepository.findAllByMallId(mallId, pageable)
                 .map(storeMapper::toDisplayStoreDto);
     }
 
@@ -66,11 +66,9 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public DetailsStoreDto getStoreOfCurrentUser() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var currentUserDisplayDto = userService.getCurrentUser(authentication);
-        var currentUserEntity = userService.getEntityById(currentUserDisplayDto.getId());
-        var store = getEntityById(currentUserEntity.getStore().getId());
+    public DetailsStoreDto getStoreOfCurrentUser(Authentication authentication) {
+        var currentUser = userService.getCurrentUserEntity(authentication);
+        var store = getEntityById(currentUser.getStore().getId());
 
         return storeMapper.toDetailsStoreDto(store);
     }

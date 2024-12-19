@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<DisplayProductDto> getAll(Pageable pageable, String storeId) {
-        return productRepository.findByStore_Id(storeId, pageable)
+        return productRepository.findByStoreId(storeId, pageable)
                 .map(productMapper::toDisplayProductDto);
     }
 

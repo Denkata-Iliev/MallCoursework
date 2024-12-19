@@ -25,6 +25,10 @@
                 <li class="nav-item" th:if="${@storeExpression.worksAtStore()}">
                     <a class="nav-link fs-3" href="/stores/my-store">My Store</a>
                 </li>
+
+                <li class="nav-item" sec:authorize="hasRole('ROLE_MALL_OWNER')">
+                    <a class="nav-link fs-3" href="/malls/my-malls">My Malls</a>
+                </li>
             </ul>
         </div>
 

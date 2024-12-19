@@ -22,6 +22,8 @@ public interface UserService {
 
     UserDisplayDto getCurrentUser(Authentication authentication);
 
+    User getCurrentUserEntity(Authentication authentication);
+
     UpdateUserDto getUpdateDto(UserDisplayDto userDisplayDto);
 
     void update(UpdateUserDto updateUserDto, String id);

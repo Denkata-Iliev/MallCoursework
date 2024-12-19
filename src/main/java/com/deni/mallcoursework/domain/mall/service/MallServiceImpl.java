@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,6 +44,14 @@ public class MallServiceImpl implements MallService {
     @Override
     public Page<DisplayMallDto> getAll(Pageable pageable) {
         return mallRepository.findAll(pageable)
+                .map(mallMapper::toDisplayMallDto);
+    }
+
+    @Override
+    public Page<DisplayMallDto> getMallsOfCurrentUser(Authentication authentication, Pageable pageable) {
+        var currentUserEntity = userService.getCurrentUserEntity(authentication);
+
+        return mallRepository.findAllByOwnerId(currentUserEntity.getId(), pageable)
                 .map(mallMapper::toDisplayMallDto);
     }
 
