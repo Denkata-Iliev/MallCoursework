@@ -24,23 +24,23 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final Cloudinary cloudinary;
-    private final ProductMapper mapper;
+    private final ProductMapper productMapper;
     private final StoreService storeService;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository,
                               Cloudinary cloudinary,
-                              ProductMapper mapper,
+                              ProductMapper productMapper,
                               StoreService storeService) {
         this.productRepository = productRepository;
         this.cloudinary = cloudinary;
-        this.mapper = mapper;
+        this.productMapper = productMapper;
         this.storeService = storeService;
     }
 
     @Override
     public void create(CreateProductDto createDto, String storeId) {
-        var product = mapper.fromCreateDto(createDto);
+        var product = productMapper.fromCreateDto(createDto);
 
         Map uploadResult = null;
         try {
@@ -57,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
             product.setImageUrl(url);
         }
 
-        var store = storeService.getById(storeId);
+        var store = storeService.getEntityById(storeId);
         product.setStore(store);
 
         productRepository.save(product);
@@ -66,14 +66,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<DisplayProductDto> getAll(Pageable pageable, String storeId) {
         return productRepository.findByStore_Id(storeId, pageable)
-                .map(mapper::toDisplayProductDto);
+                .map(productMapper::toDisplayProductDto);
     }
 
     @Override
     public DisplayProductDto getById(String id) {
         var product = getProductById(id);
 
-        return mapper.toDisplayProductDto(product);
+        return productMapper.toDisplayProductDto(product);
     }
 
     @Override
@@ -85,14 +85,14 @@ public class ProductServiceImpl implements ProductService {
     public CreateProductDto getCreateDtoById(String id) {
         var product = getProductById(id);
 
-        return mapper.toCreateProductDto(product);
+        return productMapper.toCreateProductDto(product);
     }
 
     @Override
     public String update(CreateProductDto createDto, String id) {
         var product = getProductById(id);
 
-        mapper.update(createDto, product);
+        productMapper.update(createDto, product);
 
         if (createDto.getImageFile().isEmpty()) {
             productRepository.save(product);

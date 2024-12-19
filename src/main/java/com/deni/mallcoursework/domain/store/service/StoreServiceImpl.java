@@ -36,7 +36,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public void create(CreateStoreDto createStoreDto, String mallId) {
         var store = storeMapper.fromCreateDto(createStoreDto);
-        var manager = userService.getUserById(createStoreDto.getManagerId());
+        var manager = userService.getEntityById(createStoreDto.getManagerId());
         var mall = mallService.getEntityById(mallId);
 
         store.setManager(manager);
@@ -54,35 +54,37 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public DetailsStoreDto getDetailsById(String id) {
-        var store = getStoreById(id);
+        var store = getEntityById(id);
+
         return storeMapper.toDetailsStoreDto(store);
     }
 
     @Override
-    public Store getById(String id) {
-        return getStoreById(id);
+    public Store getEntityById(String id) {
+        return storeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(STORE, ID));
     }
 
     @Override
     public DetailsStoreDto getStoreOfCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var currentUserDisplayDto = userService.getCurrentUser(authentication);
-        var currentUserEntity = userService.getUserById(currentUserDisplayDto.getId());
-        var store = getStoreById(currentUserEntity.getStore().getId());
+        var currentUserEntity = userService.getEntityById(currentUserDisplayDto.getId());
+        var store = getEntityById(currentUserEntity.getStore().getId());
 
         return storeMapper.toDetailsStoreDto(store);
     }
 
     @Override
     public CreateStoreDto getCreateDtoById(String id) {
-        var store = getStoreById(id);
+        var store = getEntityById(id);
 
         return storeMapper.toCreateStoreDto(store);
     }
 
     @Override
     public String update(CreateStoreDto createStoreDto, String id) {
-        var store = getStoreById(id);
+        var store = getEntityById(id);
 
         storeMapper.update(createStoreDto, store);
 
@@ -107,10 +109,10 @@ public class StoreServiceImpl implements StoreService {
         // that way they'll be deleted, because a manager is directly connected to the store,
         // and it doesn't make sense to have the old manager's account connected to a different store
         // example: no sense in manager with email ivan@newyorker.com to be manager of LC Waikiki store
-        var oldManager = userService.getUserById(oldManagerId);
+        var oldManager = userService.getEntityById(oldManagerId);
         oldManager.setStore(null);
 
-        var newManager = userService.getUserById(newManagerId);
+        var newManager = userService.getEntityById(newManagerId);
         store.setManager(newManager);
         newManager.setStore(store);
         storeRepository.save(store);
@@ -120,7 +122,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public String delete(String id) {
-        var store = getStoreById(id);
+        var store = getEntityById(id);
 
         // manually detaching manager from store,
         // so the cascade deletion works correctly
@@ -130,10 +132,5 @@ public class StoreServiceImpl implements StoreService {
         storeRepository.deleteById(id);
 
         return store.getMall().getId();
-    }
-
-    private Store getStoreById(String id) {
-        return storeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(STORE, ID));
     }
 }

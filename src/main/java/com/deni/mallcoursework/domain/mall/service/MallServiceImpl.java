@@ -34,7 +34,7 @@ public class MallServiceImpl implements MallService {
     public void createMall(CreateMallDto createMallDto) {
         var mall = mallMapper.fromCreateDto(createMallDto);
 
-        var mallOwner = userService.getUserById(createMallDto.getOwnerId());
+        var mallOwner = userService.getEntityById(createMallDto.getOwnerId());
         mall.setOwner(mallOwner);
 
         mallRepository.save(mall);
@@ -75,7 +75,7 @@ public class MallServiceImpl implements MallService {
         String currentOwnerId = mall.getOwner().getId();
         String newOwnerId = createMallDto.getOwnerId();
         if (!currentOwnerId.equals(newOwnerId)) {
-            var owner = userService.getUserById(newOwnerId);
+            var owner = userService.getEntityById(newOwnerId);
             mall.setOwner(owner);
         }
 

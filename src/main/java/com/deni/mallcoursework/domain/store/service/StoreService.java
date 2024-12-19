@@ -14,7 +14,7 @@ public interface StoreService {
 
     DetailsStoreDto getDetailsById(String id);
 
-    Store getById(String id);
+    Store getEntityById(String id);
 
     DetailsStoreDto getStoreOfCurrentUser();
 

@@ -18,7 +18,7 @@ public interface UserService {
 
     UserDisplayDto getById(String id);
 
-    User getUserById(String id);
+    User getEntityById(String id);
 
     UserDisplayDto getCurrentUser(Authentication authentication);
 

@@ -24,19 +24,23 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final String USER = "User";
+    private static final String ID = "id";
+    public static final String EMAIL = "email";
+    public static final String PHONE = "phone";
 
     private final UserMapper userMapper;
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final StoreService storeService;
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper,
-                           UserRepository repository,
+                           UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
                            @Lazy StoreService storeService) {
         this.userMapper = userMapper;
-        this.repository = repository;
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.storeService = storeService;
     }
@@ -46,7 +50,7 @@ public class UserServiceImpl implements UserService {
         var user = validateUserEncodePassword(registerDto);
         user.setRole(Role.CLIENT);
 
-        repository.save(user);
+        userRepository.save(user);
     }
 
     @Override
@@ -54,7 +58,7 @@ public class UserServiceImpl implements UserService {
         var user = validateUserEncodePassword(registerDto);
         user.setRole(Role.valueOf(role));
 
-        repository.save(user);
+        userRepository.save(user);
     }
 
     @Override
@@ -62,29 +66,29 @@ public class UserServiceImpl implements UserService {
         var user = validateUserEncodePassword(registerDto);
         user.setRole(Role.EMPLOYEE);
 
-        var store = storeService.getById(storeId);
+        var store = storeService.getEntityById(storeId);
         user.setStore(store);
 
-        repository.save(user);
+        userRepository.save(user);
     }
 
     @Override
     public UserDisplayDto getById(String id) {
-        var user = getUserById(id);
+        var user = getEntityById(id);
 
         return userMapper.toDisplayDto(user);
     }
 
     @Override
-    public User getUserById(String id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id"));
+    public User getEntityById(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(USER, ID));
     }
 
     @Override
     public UserDisplayDto getCurrentUser(Authentication authentication) {
         var userDetails = (MallUserDetails) authentication.getPrincipal();
-        var user = getUserById(userDetails.getId());
+        var user = getEntityById(userDetails.getId());
 
         return userMapper.toDisplayDto(user);
     }
@@ -96,28 +100,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UpdateUserDto updateUserDto, String id) {
-        var user = getUserById(id);
+        var user = getEntityById(id);
 
-        var userByEmail = repository.findByEmail(updateUserDto.getEmail());
+        var userByEmail = userRepository.findByEmail(updateUserDto.getEmail());
         if (userByEmail != null && !user.getId().equals(userByEmail.getId())) {
-            throw new ConflictException("email");
+            throw new ConflictException(EMAIL);
         }
 
-        var userByPhone = repository.findByPhone(updateUserDto.getPhone());
+        var userByPhone = userRepository.findByPhone(updateUserDto.getPhone());
         if (userByPhone != null && !user.getId().equals(userByPhone.getId())) {
-            throw new ConflictException("phone");
+            throw new ConflictException(PHONE);
         }
 
         userMapper.update(updateUserDto, user);
-        repository.save(user);
+        userRepository.save(user);
     }
 
     @Override
     public List<UserDisplayDto> getAllManagers(String id) {
-        var availableManagers = repository.findAllByRoleAndStoreIsNull(Role.MANAGER);
+        var availableManagers = userRepository.findAllByRoleAndStoreIsNull(Role.MANAGER);
 
+        // if id is not null, add the current manager to the list,
+        // so that when updating a store, it's not necessary to update the manager
         if (id != null) {
-            availableManagers.add(getUserById(id));
+            availableManagers.add(getEntityById(id));
         }
 
         return availableManagers
@@ -128,7 +134,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDisplayDto> getAllMallOwners() {
-        return repository.findAllByRole(Role.MALL_OWNER)
+        return userRepository.findAllByRole(Role.MALL_OWNER)
                 .stream()
                 .map(userMapper::toDisplayDto)
                 .collect(Collectors.toList());
@@ -136,7 +142,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(ChangePassDto changePassDto, String id) {
-        var user = getUserById(id);
+        var user = getEntityById(id);
         if (!passwordEncoder.matches(changePassDto.getOldPass(), user.getPassword())) {
             throw new PasswordMismatchException();
         }
@@ -144,18 +150,18 @@ public class UserServiceImpl implements UserService {
         var encodedNewPassword = passwordEncoder.encode(changePassDto.getNewPass());
         user.setPassword(encodedNewPassword);
 
-        repository.save(user);
+        userRepository.save(user);
     }
 
     private User validateUserEncodePassword(RegisterDto registerDto) {
         var user = userMapper.fromRegisterDto(registerDto);
 
-        if (repository.existsByEmail(registerDto.getEmail())) {
-            throw new ConflictException("email");
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new ConflictException(EMAIL);
         }
 
-        if (repository.existsByPhone(registerDto.getPhone())) {
-            throw new ConflictException("phone");
+        if (userRepository.existsByPhone(registerDto.getPhone())) {
+            throw new ConflictException(PHONE);
         }
 
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));

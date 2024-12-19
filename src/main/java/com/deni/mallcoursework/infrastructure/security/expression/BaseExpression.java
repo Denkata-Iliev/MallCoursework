@@ -23,7 +23,7 @@ public class BaseExpression {
     public User getUser(Authentication authentication) {
         var mallUserDetails = (MallUserDetails) authentication.getPrincipal();
 
-        return userService.getUserById(mallUserDetails.getId());
+        return userService.getEntityById(mallUserDetails.getId());
     }
 
     public Authentication getAuthentication() {

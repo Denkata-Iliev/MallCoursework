@@ -18,6 +18,7 @@ public interface MallService {
     DetailsMallDto getDetailsById(String id);
 
     CreateMallDto getCreateDtoById(String id);
+
     void update(CreateMallDto createMallDto, String id);
 
     @Transactional

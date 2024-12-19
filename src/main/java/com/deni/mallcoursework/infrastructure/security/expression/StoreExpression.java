@@ -52,7 +52,7 @@ public class StoreExpression {
         }
 
         var currentUser = baseExpression.getUser(authentication);
-        var store = storeService.getById(storeId);
+        var store = storeService.getEntityById(storeId);
         var storeManager = store.getManager();
         if (!currentUser.getId().equals(storeManager.getId())) {
             return false;
@@ -118,7 +118,7 @@ public class StoreExpression {
         }
 
         var currentUser = baseExpression.getUser(authentication);
-        var store = storeService.getById(storeId);
+        var store = storeService.getEntityById(storeId);
         var mall = getMall(mallId, store);
 
         var mallOwnerId = mall.getOwner().getId();
