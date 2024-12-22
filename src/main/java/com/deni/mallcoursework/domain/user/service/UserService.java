@@ -1,10 +1,13 @@
 package com.deni.mallcoursework.domain.user.service;
 
+import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
 import com.deni.mallcoursework.domain.user.dto.ChangePassDto;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
 import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
 import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
 import com.deni.mallcoursework.domain.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -37,4 +40,6 @@ public interface UserService {
     void addFavorite(String storeId, Authentication authentication);
 
     void removeFavorite(String storeId, Authentication authentication);
+
+    Page<DisplayStoreDto> getCurrentUserFavorites(Authentication authentication, Pageable pageable);
 }

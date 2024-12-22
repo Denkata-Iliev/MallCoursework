@@ -10,6 +10,8 @@ import com.deni.mallcoursework.infrastructure.exception.PasswordMismatchExceptio
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,6 +24,8 @@ import org.thymeleaf.util.StringUtils;
 @Controller
 @RequestMapping("/users")
 public class UsersController {
+    private static final String HAS_ROLE_CLIENT = "hasRole('ROLE_CLIENT')";
+
     private final UserService userService;
 
     @Autowired
@@ -163,7 +167,21 @@ public class UsersController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_CLIENT')")
+    @PreAuthorize(HAS_ROLE_CLIENT)
+    @GetMapping("/favorites")
+    public String favorites(@RequestParam(name = "page", defaultValue = "0") int pageNum,
+                            @RequestParam(defaultValue = "9") int size,
+                            Model model,
+                            Authentication authentication) {
+        Pageable pageable = PageRequest.of(pageNum, size);
+        var favorites = userService.getCurrentUserFavorites(authentication, pageable);
+        model.addAttribute("favorites", favorites.getContent());
+        model.addAttribute("page", favorites);
+
+        return "users/favorites";
+    }
+
+    @PreAuthorize(HAS_ROLE_CLIENT)
     @PostMapping("/favorites/{storeId}")
     public ResponseEntity<String> addFavorite(@PathVariable String storeId, Authentication authentication) {
         try {
@@ -175,7 +193,7 @@ public class UsersController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_CLIENT')")
+    @PreAuthorize(HAS_ROLE_CLIENT)
     @DeleteMapping("/favorites/{storeId}")
     public ResponseEntity<String> removeFavorite(@PathVariable String storeId, Authentication authentication) {
         try {

@@ -1,5 +1,7 @@
 package com.deni.mallcoursework.domain.user.service;
 
+import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
+import com.deni.mallcoursework.domain.store.mapper.StoreMapper;
 import com.deni.mallcoursework.domain.store.service.StoreService;
 import com.deni.mallcoursework.domain.user.dto.ChangePassDto;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
@@ -15,6 +17,9 @@ import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundExceptio
 import com.deni.mallcoursework.infrastructure.security.MallUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,16 +38,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final StoreService storeService;
+    private final StoreMapper storeMapper;
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper,
                            UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
-                           @Lazy StoreService storeService) {
+                           @Lazy StoreService storeService,
+                           StoreMapper storeMapper) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.storeService = storeService;
+        this.storeMapper = storeMapper;
     }
 
     @Override
@@ -175,6 +183,22 @@ public class UserServiceImpl implements UserService {
 
         user.getFavorites().remove(store);
         userRepository.save(user);
+    }
+
+    @Override
+    public Page<DisplayStoreDto> getCurrentUserFavorites(Authentication authentication, Pageable pageable) {
+        var user = getCurrentUserEntity(authentication);
+
+        List<DisplayStoreDto> stores = user.getFavorites()
+                .stream()
+                .map(storeMapper::toDisplayStoreDto)
+                .toList();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), stores.size());
+        List<DisplayStoreDto> paginatedList = stores.subList(start, end);
+
+        return new PageImpl<>(paginatedList, pageable, stores.size());
     }
 
     private User validateUserEncodePassword(RegisterDto registerDto) {

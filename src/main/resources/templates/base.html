@@ -29,6 +29,10 @@
                 <li class="nav-item" sec:authorize="hasRole('ROLE_MALL_OWNER')">
                     <a class="nav-link fs-3" href="/malls/my-malls">My Malls</a>
                 </li>
+
+                <li class="nav-item" sec:authorize="hasRole('ROLE_CLIENT')">
+                    <a class="nav-link fs-3" href="/users/favorites">Favorites</a>
+                </li>
             </ul>
         </div>
 
