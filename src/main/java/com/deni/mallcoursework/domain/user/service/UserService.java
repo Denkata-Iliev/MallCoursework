@@ -33,4 +33,8 @@ public interface UserService {
     List<UserDisplayDto> getAllMallOwners();
 
     void changePassword(ChangePassDto changePassDto, String id);
+
+    void addFavorite(String storeId, Authentication authentication);
+
+    void removeFavorite(String storeId, Authentication authentication);
 }

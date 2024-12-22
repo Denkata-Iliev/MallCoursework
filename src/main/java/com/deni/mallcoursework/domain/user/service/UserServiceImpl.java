@@ -159,6 +159,24 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public void addFavorite(String storeId, Authentication authentication) {
+        var user = getCurrentUserEntity(authentication);
+        var store = storeService.getEntityById(storeId);
+
+        user.getFavorites().add(store);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void removeFavorite(String storeId, Authentication authentication) {
+        var user = getCurrentUserEntity(authentication);
+        var store = storeService.getEntityById(storeId);
+
+        user.getFavorites().remove(store);
+        userRepository.save(user);
+    }
+
     private User validateUserEncodePassword(RegisterDto registerDto) {
         var user = userMapper.fromRegisterDto(registerDto);
 

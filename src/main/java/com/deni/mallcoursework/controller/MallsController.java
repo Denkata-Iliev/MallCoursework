@@ -2,6 +2,7 @@ package com.deni.mallcoursework.controller;
 
 import com.deni.mallcoursework.domain.mall.dto.CreateMallDto;
 import com.deni.mallcoursework.domain.mall.service.MallService;
+import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.domain.store.service.StoreService;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/malls")
@@ -82,9 +85,20 @@ public class MallsController {
     public String stores(@PathVariable String id,
                          @RequestParam(name = "page", defaultValue = "0") int pageNum,
                          @RequestParam(defaultValue = "5") int size,
-                         Model model) {
+                         Model model,
+                         Authentication authentication) {
         Pageable pageable = PageRequest.of(pageNum, size);
         var page = storeService.getAll(pageable, id);
+
+        if (authentication != null) {
+            var user = userService.getCurrentUserEntity(authentication);
+            var userFavorites = user.getFavorites()
+                    .stream()
+                    .map(Store::getId)
+                    .toList();
+
+            model.addAttribute("userFavorites", userFavorites);
+        }
 
         model.addAttribute("stores", page.getContent());
         model.addAttribute("page", page);

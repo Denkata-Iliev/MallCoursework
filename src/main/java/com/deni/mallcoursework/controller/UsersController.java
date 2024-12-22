@@ -10,6 +10,7 @@ import com.deni.mallcoursework.infrastructure.exception.PasswordMismatchExceptio
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -40,7 +41,6 @@ public class UsersController {
                 false,
                 false
         );
-
 
         return "users/profile";
     }
@@ -116,7 +116,6 @@ public class UsersController {
                     false
             );
 
-
             return "users/profile";
         }
     }
@@ -161,6 +160,30 @@ public class UsersController {
             );
 
             return "users/profile";
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_CLIENT')")
+    @PostMapping("/favorites/{storeId}")
+    public ResponseEntity<String> addFavorite(@PathVariable String storeId, Authentication authentication) {
+        try {
+            userService.addFavorite(storeId, authentication);
+
+            return ResponseEntity.ok("Store added to favorites!");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_CLIENT')")
+    @DeleteMapping("/favorites/{storeId}")
+    public ResponseEntity<String> removeFavorite(@PathVariable String storeId, Authentication authentication) {
+        try {
+            userService.removeFavorite(storeId, authentication);
+
+            return ResponseEntity.ok("Store removed from favorites!");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
