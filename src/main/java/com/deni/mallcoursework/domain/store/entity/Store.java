@@ -49,4 +49,7 @@ public class Store {
             orphanRemoval = true
     )
     private Set<Product> products;
+
+    @ManyToMany(mappedBy = "favorites")
+    private Set<User> users;
 }

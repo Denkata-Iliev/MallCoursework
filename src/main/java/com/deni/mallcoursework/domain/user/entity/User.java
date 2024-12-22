@@ -54,4 +54,12 @@ public class User {
             orphanRemoval = true
     )
     private Set<Mall> malls;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_store_favorites",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id")
+    )
+    private Set<Store> favorites;
 }
