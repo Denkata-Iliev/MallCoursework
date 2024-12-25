@@ -16,9 +16,54 @@
     <h1>Users</h1>
     <h3 class="text-danger text-center" th:if="${error}" th:text="${error}"></h3>
 
+    <form th:action="@{/users}" class="mb-3 d-flex align-items-center gap-2">
+        <!-- Search Field -->
+        <input type="text" class="form-control" placeholder="Search..." name="query" id="searchQuery" aria-label="search input">
+
+        <!-- Dropdown for Checkboxes -->
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="searchFieldsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Fields
+            </button>
+
+            <ul class="dropdown-menu" aria-labelledby="searchFieldsDropdown">
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="fullname" id="searchByFullname" name="fields">
+                        <label class="form-check-label" for="searchByFullname">Full Name</label>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="email" id="searchByEmail" name="fields">
+                        <label class="form-check-label" for="searchByEmail">Email</label>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="phone" id="searchByPhone" name="fields">
+                        <label class="form-check-label" for="searchByPhone">Phone</label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Dropdown for Roles -->
+        <select class="form-select" name="role" id="searchRole" aria-label="role select">
+            <option value="" selected>All Roles</option>
+            <option th:each="role : ${roles}" th:value="${role.name()}" th:text="${role.name()}"></option>
+        </select>
+
+        <!-- Search Button -->
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- User List -->
     <ul class="list">
-        <li class="item" th:each="user : ${users}">
-            <div class="d-flex" th:if="${!user.id.equals(currentUser.id)}">
+        <li class="item" th:each="user : ${users}" th:if="${!user.id.equals(currentUser.id)}">
+            <div class="d-flex">
 
                 <img th:src="@{https://ui-avatars.com/api(rounded=true, size=70, format='png', name=${user.fullname})}"
                      alt="profile picture"
@@ -32,7 +77,7 @@
                 </div>
             </div>
 
-            <div class="d-flex gap-2" th:if="${!user.id.equals(currentUser.id)}">
+            <div class="d-flex gap-2">
                 <form th:action="@{/users/delete/{id}(id=${user.id})}"
                       method="post"
                       onsubmit="return confirmDeletion('user')"

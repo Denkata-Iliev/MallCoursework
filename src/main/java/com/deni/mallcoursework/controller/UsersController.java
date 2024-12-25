@@ -4,6 +4,7 @@ import com.deni.mallcoursework.domain.user.dto.ChangePassDto;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
 import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
 import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
+import com.deni.mallcoursework.domain.user.entity.Role;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import com.deni.mallcoursework.infrastructure.exception.PasswordMismatchException;
@@ -45,6 +46,7 @@ public class UsersController {
         var users = userService.getAll(pageable);
         model.addAttribute("users", users.getContent());
         model.addAttribute("page", users);
+        model.addAttribute("roles", Role.values());
 
         var currentUserDisplayDto = userService.getCurrentUser(authentication);
         model.addAttribute("currentUser", currentUserDisplayDto);
