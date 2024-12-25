@@ -33,6 +33,10 @@
                 <li class="nav-item" sec:authorize="hasRole('ROLE_CLIENT')">
                     <a class="nav-link fs-3" href="/users/favorites">Favorites</a>
                 </li>
+
+                <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="nav-link fs-3" href="/users">Users</a>
+                </li>
             </ul>
         </div>
 

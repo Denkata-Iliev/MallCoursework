@@ -54,6 +54,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Page<UserDisplayDto> getAll(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::toDisplayDto);
+    }
+
+    @Override
+    public void delete(String id) {
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException(USER, ID);
+        }
+
+        userRepository.deleteById(id);
+    }
+
+    @Override
     public void register(RegisterDto registerDto) {
         var user = validateUserEncodePassword(registerDto);
         user.setRole(Role.CLIENT);

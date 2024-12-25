@@ -13,6 +13,10 @@ import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface UserService {
+    Page<UserDisplayDto> getAll(Pageable pageable);
+
+    void delete(String id);
+
     void register(RegisterDto registerDto);
 
     void register(RegisterDto registerDto, String role);

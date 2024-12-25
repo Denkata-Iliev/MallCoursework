@@ -19,18 +19,55 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.util.StringUtils;
 
 @Controller
 @RequestMapping("/users")
 public class UsersController {
     private static final String HAS_ROLE_CLIENT = "hasRole('ROLE_CLIENT')";
+    private static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 
     private final UserService userService;
 
     @Autowired
     public UsersController(UserService userService) {
         this.userService = userService;
+    }
+
+    @PreAuthorize(HAS_ROLE_ADMIN)
+    @GetMapping
+    public String index(@RequestParam(name = "page", defaultValue = "0") int pageNum,
+                        @RequestParam(defaultValue = "10") int size,
+                        Model model,
+                        Authentication authentication) {
+        Pageable pageable = PageRequest.of(pageNum, size);
+        var users = userService.getAll(pageable);
+        model.addAttribute("users", users.getContent());
+        model.addAttribute("page", users);
+
+        var currentUserDisplayDto = userService.getCurrentUser(authentication);
+        model.addAttribute("currentUser", currentUserDisplayDto);
+
+        return "users/index";
+    }
+
+    @PreAuthorize(HAS_ROLE_ADMIN)
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable String id, RedirectAttributes redirectAttributes, Authentication authentication) {
+        try {
+            var currentUser = userService.getCurrentUser(authentication);
+            if (currentUser.getId().equals(id)) {
+                redirectAttributes.addFlashAttribute("error", "You can not delete yourself!");
+                return "redirect:/users";
+            }
+
+            userService.delete(id);
+
+            return "redirect:/users";
+        } catch (ResourceNotFoundException e) {
+            return "redirect:/error/404";
+        }
     }
 
     @GetMapping("/profile")
