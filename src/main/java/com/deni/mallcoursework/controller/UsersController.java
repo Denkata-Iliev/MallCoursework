@@ -1,9 +1,6 @@
 package com.deni.mallcoursework.controller;
 
-import com.deni.mallcoursework.domain.user.dto.ChangePassDto;
-import com.deni.mallcoursework.domain.user.dto.RegisterDto;
-import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
-import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
+import com.deni.mallcoursework.domain.user.dto.*;
 import com.deni.mallcoursework.domain.user.entity.Role;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
@@ -23,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.util.StringUtils;
 
+import java.util.ArrayList;
+
 @Controller
 @RequestMapping("/users")
 public class UsersController {
@@ -40,13 +39,19 @@ public class UsersController {
     @GetMapping
     public String index(@RequestParam(name = "page", defaultValue = "0") int pageNum,
                         @RequestParam(defaultValue = "10") int size,
+                        SearchUserDto searchUserDto,
                         Model model,
                         Authentication authentication) {
         Pageable pageable = PageRequest.of(pageNum, size);
-        var users = userService.getAll(pageable);
+        var users = userService.getAll(pageable, searchUserDto);
         model.addAttribute("users", users.getContent());
         model.addAttribute("page", users);
         model.addAttribute("roles", Role.values());
+
+        if (searchUserDto.getFields() == null) {
+            searchUserDto.setFields(new ArrayList<>());
+        }
+        model.addAttribute("searchUserDto", searchUserDto);
 
         var currentUserDisplayDto = userService.getCurrentUser(authentication);
         model.addAttribute("currentUser", currentUserDisplayDto);

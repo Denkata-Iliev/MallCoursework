@@ -3,14 +3,12 @@ package com.deni.mallcoursework.domain.user.service;
 import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
 import com.deni.mallcoursework.domain.store.mapper.StoreMapper;
 import com.deni.mallcoursework.domain.store.service.StoreService;
-import com.deni.mallcoursework.domain.user.dto.ChangePassDto;
-import com.deni.mallcoursework.domain.user.dto.RegisterDto;
-import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
-import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
+import com.deni.mallcoursework.domain.user.dto.*;
 import com.deni.mallcoursework.domain.user.entity.Role;
 import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.user.mapper.UserMapper;
 import com.deni.mallcoursework.domain.user.repository.UserRepository;
+import com.deni.mallcoursework.domain.user.repository.UserSpecification;
 import com.deni.mallcoursework.infrastructure.exception.ConflictException;
 import com.deni.mallcoursework.infrastructure.exception.PasswordMismatchException;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
@@ -54,8 +52,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDisplayDto> getAll(Pageable pageable) {
-        return userRepository.findAll(pageable)
+    public Page<UserDisplayDto> getAll(Pageable pageable, SearchUserDto searchUserDto) {
+        var userSpecification = new UserSpecification(searchUserDto);
+        return userRepository.findAll(userSpecification, pageable)
                 .map(userMapper::toDisplayDto);
     }
 
