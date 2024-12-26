@@ -3,9 +3,9 @@ package com.deni.mallcoursework.domain.user.dto;
 import com.deni.mallcoursework.infrastructure.password.ConfirmPassword;
 import com.deni.mallcoursework.util.Constants;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
@@ -13,14 +13,14 @@ import lombok.Setter;
 public final class ChangePassDto {
 
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-    @Size(min = 8, max = 20)
+    @Length(min = 8, message = Constants.PASSWORD_AT_LEAST_EIGHT_CHARS)
     private String oldPass;
 
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-    @Size(min = 8, max = 20)
+    @Length(min = 8, message = Constants.PASSWORD_AT_LEAST_EIGHT_CHARS)
     private String newPass;
 
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-    @Size(min = 8, max = 20)
+    @Length(min = 8, message = Constants.PASSWORD_AT_LEAST_EIGHT_CHARS)
     private String confNewPass;
 }

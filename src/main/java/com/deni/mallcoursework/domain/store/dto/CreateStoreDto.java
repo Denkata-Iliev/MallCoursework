@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 public final class CreateStoreDto {
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-    @Length(min = 5, message = "Name must be at least 5 characters long!")
+    @Length(min = 5, message = Constants.FIELD_AT_LEAST_FIVE_CHARS)
     private String name;
 
     @NotNull(message = Constants.BLANK_FIELD_ERROR)

@@ -4,19 +4,19 @@ import com.deni.mallcoursework.util.Constants;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
 public final class UpdateUserDto {
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-    @Size(min = 3, max = 20)
+    @Length(min = 5, message = Constants.FIELD_AT_LEAST_FIVE_CHARS)
     private String fullname;
 
     @Email(message = Constants.EMAIL_ERROR)
-    @Size(min = 3, max = 20)
+    @Length(min = 5, message = Constants.FIELD_AT_LEAST_FIVE_CHARS)
     private String email;
 
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)

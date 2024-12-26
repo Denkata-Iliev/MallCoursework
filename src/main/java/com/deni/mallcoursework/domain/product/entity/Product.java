@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import org.thymeleaf.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ public class Product {
 
     @Column(nullable = false)
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
+    @Length(min = 5, message = Constants.FIELD_AT_LEAST_FIVE_CHARS)
     private String name;
 
     @Column(nullable = false)
