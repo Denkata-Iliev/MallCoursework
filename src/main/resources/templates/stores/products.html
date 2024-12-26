@@ -14,11 +14,17 @@
     <div class="d-flex">
         <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
            th:href="@{/products/create/{storeId}(storeId=${id})}"
-           class="btn btn-primary mb-3 p-2">Create Product</a>
+           class="btn btn-primary mb-3 mt-3">Create Product</a>
 
-        <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
-           th:href="@{/users/create(role='EMPLOYEE', returnUrl='stores/' + ${id}, storeId=${id})}"
-           class="btn btn-primary mb-3 p-2 ms-auto">Create Employee</a>
+        <div class="ms-auto d-flex gap-2">
+            <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
+               th:href="@{/users/create(role='EMPLOYEE', returnUrl='stores/' + ${id}, storeId=${id})}"
+               class="btn btn-primary mb-3 mt-3">Create Employee</a>
+
+            <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
+               th:href="@{/stores/{id}/employees(id=${id})}"
+               class="btn btn-warning mb-3 mt-3">Employees</a>
+        </div>
     </div>
 </div>
 
@@ -28,16 +34,16 @@
     <div class="d-flex">
         <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
            th:href="@{/products/create/{storeId}(storeId=${id})}"
-           class="btn btn-primary mb-3 p-2">Create Product</a>
+           class="btn btn-primary mb-3 mt-3">Create Product</a>
 
-        <div class="ms-auto">
+        <div class="ms-auto d-flex gap-2">
             <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
                th:href="@{/users/create(role='EMPLOYEE', returnUrl='stores/' + ${id}, storeId=${id})}"
-               class="btn btn-primary mb-3 p-2">Create Employee</a>
+               class="btn btn-primary mb-3 mt-3">Create Employee</a>
 
             <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
                th:href="@{/stores/{id}/employees(id=${id})}"
-               class="btn btn-warning mb-3 p-2">Employees</a>
+               class="btn btn-warning mb-3 mt-3">Employees</a>
         </div>
     </div>
 

@@ -72,6 +72,7 @@ public class MallsController {
     public String create(@Valid CreateMallDto createMallDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("createMallDto", createMallDto);
+            model.addAttribute("mallOwners", userService.getAllMallOwners());
             return "malls/create";
         }
 

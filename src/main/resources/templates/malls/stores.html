@@ -11,15 +11,22 @@
 <body>
 <nav th:replace="~{base :: navbar}"></nav>
 
-<div th:if="${#lists.isEmpty(stores)}">
-    <h1>There are no stores in this mall yet!</h1>
-    <a th:href="@{/stores/create/{id}(id=${id})}"
-       class="btn btn-primary"
-       th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
+<div class="container mt-5" th:if="${#lists.isEmpty(stores)}">
+    <h1 class="text-center mb-4">There are no stores in this mall yet!</h1>
+
+    <div class="d-flex">
+        <a th:href="@{/stores/create/{id}(id=${id})}"
+           class="btn btn-primary mb-3 mt-3"
+           th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
+
+        <a th:href="@{/users/create(role='MANAGER', returnUrl='malls/' + ${id})}"
+           class="btn btn-primary mb-3 mt-3 ms-auto"
+           th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Manager</a>
+    </div>
 </div>
 
-<div class="container" th:if="${!#lists.isEmpty(stores)}">
-    <h1>Our Stores</h1>
+<div class="container mt-5" th:if="${!#lists.isEmpty(stores)}">
+    <h1 class="text-center mb-4">Our Stores</h1>
 
     <!-- Notification Box -->
     <div id="notification" class="notification-box"></div>
