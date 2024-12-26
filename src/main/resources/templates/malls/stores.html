@@ -12,7 +12,7 @@
 <nav th:replace="~{base :: navbar}"></nav>
 
 <div th:if="${#lists.isEmpty(stores)}">
-    <h1>Nothing to see here!</h1>
+    <h1>There are no stores in this mall yet!</h1>
     <a th:href="@{/stores/create/{id}(id=${id})}"
        class="btn btn-primary"
        th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
@@ -60,7 +60,7 @@
                 <a th:href="@{/stores/{id}(id=${store.id})}" class="btn btn-primary">View Products</a>
                 <a th:href="@{/stores/details/{id}(id=${store.id})}" class="btn btn-outline-primary">Details</a>
 
-                <a th:if="${@storeExpression.isAllowedToUpdateStore(store.id)}"
+                <a th:if="${@storeExpression.isAllowedToUpdateStore(store.id) || @storeExpression.isAllowedToDeleteOrChangeManagerOfStore(id, store.id)}"
                    th:href="@{/stores/update/{id}(id=${store.id})}"
                    class="btn btn-outline-success">Update</a>
 

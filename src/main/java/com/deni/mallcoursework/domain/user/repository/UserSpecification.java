@@ -50,6 +50,7 @@ public class UserSpecification implements Specification<User> {
             orPredicates.add(criteriaBuilder.like(root.get(EMAIL), searchText));
             orPredicates.add(criteriaBuilder.like(root.get(PHONE), searchText));
 
+            // combine "OR" and "AND" clauses for "WHERE" statement
             Predicate orClauses = criteriaBuilder.or(orPredicates.toArray(new Predicate[]{}));
             Predicate andClauses = andPredicates.isEmpty() ? orClauses : criteriaBuilder.and(andPredicates.toArray(new Predicate[]{}));
             return query.where(orClauses, andClauses).getRestriction();
@@ -68,6 +69,7 @@ public class UserSpecification implements Specification<User> {
             orPredicates.add(criteriaBuilder.like(root.get(PHONE), searchText));
         }
 
+        // combine "OR" and "AND" clauses for "WHERE" statement
         Predicate orClauses = criteriaBuilder.or(orPredicates.toArray(new Predicate[]{}));
         Predicate andClauses = andPredicates.isEmpty() ? orClauses : criteriaBuilder.and(andPredicates.toArray(new Predicate[]{}));
         return query.where(orClauses, andClauses).getRestriction();

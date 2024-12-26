@@ -59,9 +59,12 @@ public class UsersController {
         return "users/index";
     }
 
-    @PreAuthorize(HAS_ROLE_ADMIN)
+    @PreAuthorize("hasRole('ROLE_ADMIN') || @userExpression.canDeleteUser(#id)")
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable String id, RedirectAttributes redirectAttributes, Authentication authentication) {
+    public String delete(@PathVariable String id,
+                         @RequestParam(required = false) String returnUrl,
+                         RedirectAttributes redirectAttributes,
+                         Authentication authentication) {
         try {
             var currentUser = userService.getCurrentUser(authentication);
             if (currentUser.getId().equals(id)) {
@@ -71,7 +74,7 @@ public class UsersController {
 
             userService.delete(id);
 
-            return "redirect:/users";
+            return "redirect:/" + (returnUrl != null ? returnUrl : "users");
         } catch (ResourceNotFoundException e) {
             return "redirect:/error/404";
         }

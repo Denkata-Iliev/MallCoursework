@@ -7,12 +7,18 @@ import com.deni.mallcoursework.domain.store.dto.DisplayStoreDto;
 import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.domain.store.mapper.StoreMapper;
 import com.deni.mallcoursework.domain.store.repository.StoreRepository;
+import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
+import com.deni.mallcoursework.domain.user.entity.Role;
+import com.deni.mallcoursework.domain.user.mapper.UserMapper;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class StoreServiceImpl implements StoreService {
@@ -23,14 +29,18 @@ public class StoreServiceImpl implements StoreService {
     private final StoreMapper storeMapper;
     private final UserService userService;
     private final MallService mallService;
+    private final UserMapper userMapper;
 
     public StoreServiceImpl(StoreRepository storeRepository,
                             StoreMapper storeMapper,
-                            UserService userService, MallService mallService) {
+                            UserService userService,
+                            MallService mallService,
+                            UserMapper userMapper) {
         this.storeRepository = storeRepository;
         this.storeMapper = storeMapper;
         this.userService = userService;
         this.mallService = mallService;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -50,6 +60,27 @@ public class StoreServiceImpl implements StoreService {
     public Page<DisplayStoreDto> getAll(Pageable pageable, String mallId) {
         return storeRepository.findAllByMallId(mallId, pageable)
                 .map(storeMapper::toDisplayStoreDto);
+    }
+
+    @Override
+    public Page<UserDisplayDto> getEmployeesById(Pageable pageable, String id) {
+        var store = getEntityById(id);
+
+        // because a manager is just a user with the role manager,
+        // and an employee is just a user with the role employee,
+        // the set of users that represents the employees contains the manager of the store,
+        // therefore we need to filter the manager out before passing the employees of the store
+        List<UserDisplayDto> employees = store.getEmployees()
+                .stream()
+                .filter(employee -> !employee.getRole().equals(Role.MANAGER))
+                .map(userMapper::toDisplayDto)
+                .toList();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), employees.size());
+
+        List<UserDisplayDto> paginatedList = employees.subList(start, end);
+        return new PageImpl<>(paginatedList, pageable, employees.size());
     }
 
     @Override

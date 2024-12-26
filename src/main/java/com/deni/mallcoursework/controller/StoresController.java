@@ -54,6 +54,24 @@ public class StoresController {
         }
     }
 
+    @PreAuthorize("@storeExpression.isAllowedToCreateEmployee(#id)")
+    @GetMapping("/{id}/employees")
+    public String employees(@PathVariable String id,
+                            @RequestParam(name = "page", defaultValue = "0") int pageNum,
+                            @RequestParam(defaultValue = "10") int size,
+                            Model model) {
+        try {
+            Pageable pageable = PageRequest.of(pageNum, size);
+            var employees = storeService.getEmployeesById(pageable, id);
+            model.addAttribute("employees", employees.getContent());
+            model.addAttribute("page", employees);
+
+            return "stores/employees";
+        } catch (ResourceNotFoundException e) {
+            return "redirect:/error/404";
+        }
+    }
+
     @GetMapping("/details/{id}")
     public String details(@PathVariable String id, Model model) {
         try {
@@ -89,7 +107,7 @@ public class StoresController {
         return "redirect:/malls/" + mallId;
     }
 
-    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id)")
+    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id) || @storeExpression.isAllowedToDeleteOrChangeManagerOfStore(null, #id)")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
@@ -103,7 +121,7 @@ public class StoresController {
         }
     }
 
-    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id)")
+    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id) || @storeExpression.isAllowedToDeleteOrChangeManagerOfStore(null, #id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateStoreDto createStoreDto,

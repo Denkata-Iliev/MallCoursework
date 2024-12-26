@@ -47,6 +47,13 @@
             Update
         </a>
 
+        <a th:href="@{/stores/{id}/employees(id=${id})}"
+           class="btn btn-warning"
+           th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
+        >
+            Employees
+        </a>
+
         <form th:action="@{/stores/delete/{id}(id=${id})}"
               method="post"
               th:if="${@storeExpression.isAllowedToDeleteOrChangeManagerOfStore(store.mallId, id)}"

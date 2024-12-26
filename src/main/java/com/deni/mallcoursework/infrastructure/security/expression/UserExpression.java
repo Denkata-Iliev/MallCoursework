@@ -1,6 +1,7 @@
 package com.deni.mallcoursework.infrastructure.security.expression;
 
 import com.deni.mallcoursework.domain.user.entity.Role;
+import com.deni.mallcoursework.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +10,36 @@ import java.util.Arrays;
 @Service
 public class UserExpression {
     private final BaseExpression baseExpression;
+    private final UserService userService;
 
     @Autowired
-    public UserExpression(BaseExpression baseExpression) {
+    public UserExpression(BaseExpression baseExpression, UserService userService) {
         this.baseExpression = baseExpression;
+        this.userService = userService;
+    }
+
+    public boolean canDeleteUser(String userId) {
+        var authentication = baseExpression.getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        var userById = userService.getEntityById(userId);
+        var userByIdStoreId = userById.getStore().getId();
+
+        var currentUser = baseExpression.getUser(authentication);
+        var currentUserStore = currentUser.getStore();
+
+        var isUserByIdEmployee = userById.getRole().equals(Role.EMPLOYEE);
+        var isCurrentUserManager = currentUser.getRole().equals(Role.MANAGER);
+        var isCurrentUserManagerOfStore = userByIdStoreId.equals(currentUserStore.getId());
+
+        if (isUserByIdEmployee && isCurrentUserManager && isCurrentUserManagerOfStore) {
+            return true;
+        }
+
+        return false;
     }
 
     public boolean canUpdateInfo(String userId) {
