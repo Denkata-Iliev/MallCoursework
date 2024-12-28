@@ -3,6 +3,7 @@ package com.deni.mallcoursework.domain.user.mapper;
 import com.deni.mallcoursework.domain.user.dto.UpdateUserDto;
 import com.deni.mallcoursework.domain.user.dto.UserDisplayDto;
 import com.deni.mallcoursework.domain.user.dto.RegisterDto;
+import com.deni.mallcoursework.domain.user.dto.UserFullInfoDisplayDto;
 import com.deni.mallcoursework.domain.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -12,6 +13,8 @@ public interface UserMapper {
     User fromRegisterDto(RegisterDto registerDto);
     UserDisplayDto toDisplayDto(User user);
     UpdateUserDto toUpdateDtoFromDisplayDto(UserDisplayDto userDisplayDto);
+
+    UserFullInfoDisplayDto toFullInfoDisplayDto(User user);
 
     void update(UpdateUserDto updateUserDto, @MappingTarget User user);
 }

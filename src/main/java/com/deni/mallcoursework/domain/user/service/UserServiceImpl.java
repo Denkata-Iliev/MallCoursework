@@ -115,6 +115,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserFullInfoDisplayDto getCurrentUserFullInfo(Authentication authentication) {
+        var user = getCurrentUserEntity(authentication);
+
+        return userMapper.toFullInfoDisplayDto(user);
+    }
+
+    @Override
     public User getCurrentUserEntity(Authentication authentication) {
         var userDetails = (MallUserDetails) authentication.getPrincipal();
 
