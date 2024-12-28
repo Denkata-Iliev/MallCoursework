@@ -1,4 +1,4 @@
-package com.deni.mallcoursework.infrastructure.security.expressions;
+package com.deni.mallcoursework.infrastructure.security.expression;
 
 import com.deni.mallcoursework.domain.mall.entity.Mall;
 import com.deni.mallcoursework.domain.mall.service.MallService;
@@ -19,6 +19,46 @@ public class StoreExpression {
         this.baseExpression = baseExpression;
         this.mallService = mallService;
         this.storeService = storeService;
+    }
+
+    public boolean worksAtStore() {
+        var authentication = baseExpression.getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        var currentUser = baseExpression.getUser(authentication);
+        if (currentUser.getStore() == null) {
+            return false;
+        }
+
+        if (!currentUser.getRole().equals(Role.MANAGER) && !currentUser.getRole().equals(Role.EMPLOYEE)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isAllowedToCreateEmployee(String storeId) {
+        var authentication = baseExpression.getAuthentication();
+
+        if (authentication == null) {
+            return false;
+        }
+
+        if (baseExpression.isAdmin(authentication)) {
+            return true;
+        }
+
+        var currentUser = baseExpression.getUser(authentication);
+        var store = storeService.getEntityById(storeId);
+        var storeManager = store.getManager();
+        if (!currentUser.getId().equals(storeManager.getId())) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isAllowedToCreateStore(String mallId) {
@@ -78,7 +118,7 @@ public class StoreExpression {
         }
 
         var currentUser = baseExpression.getUser(authentication);
-        var store = storeService.getById(storeId);
+        var store = storeService.getEntityById(storeId);
         var mall = getMall(mallId, store);
 
         var mallOwnerId = mall.getOwner().getId();

@@ -9,19 +9,43 @@
 <nav th:replace="~{base :: navbar}"></nav>
 
 <div class="container mt-5" th:if="${#lists.isEmpty(products)}">
-    <h1 class="text-center mb-4">Nothing to see here!</h1>
+    <h1 class="text-center mb-4">There are no products in this store yet!</h1>
 
-    <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
-       th:href="@{/products/create/{storeId}(storeId=${id})}"
-       class="btn btn-primary mb-3 p-2">Create Product</a>
+    <div class="d-flex">
+        <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
+           th:href="@{/products/create/{storeId}(storeId=${id})}"
+           class="btn btn-primary mb-3 mt-3">Create Product</a>
+
+        <div class="ms-auto d-flex gap-2">
+            <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
+               th:href="@{/users/create(role='EMPLOYEE', returnUrl='stores/' + ${id}, storeId=${id})}"
+               class="btn btn-primary mb-3 mt-3">Create Employee</a>
+
+            <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
+               th:href="@{/stores/{id}/employees(id=${id})}"
+               class="btn btn-warning mb-3 mt-3">Employees</a>
+        </div>
+    </div>
 </div>
 
 <div class="container mt-5" th:if="${!#lists.isEmpty(products)}">
     <h1 class="text-center mb-4">Our Products</h1>
 
-    <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
-       th:href="@{/products/create/{storeId}(storeId=${id})}"
-       class="btn btn-primary mb-3 p-2">Create Product</a>
+    <div class="d-flex">
+        <a th:if="${@productExpression.isAllowedToModifyProductsWithStoreId(id)}"
+           th:href="@{/products/create/{storeId}(storeId=${id})}"
+           class="btn btn-primary mb-3 mt-3">Create Product</a>
+
+        <div class="ms-auto d-flex gap-2">
+            <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
+               th:href="@{/users/create(role='EMPLOYEE', returnUrl='stores/' + ${id}, storeId=${id})}"
+               class="btn btn-primary mb-3 mt-3">Create Employee</a>
+
+            <a th:if="${@storeExpression.isAllowedToCreateEmployee(id)}"
+               th:href="@{/stores/{id}/employees(id=${id})}"
+               class="btn btn-warning mb-3 mt-3">Employees</a>
+        </div>
+    </div>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col" th:each="product : ${products}">

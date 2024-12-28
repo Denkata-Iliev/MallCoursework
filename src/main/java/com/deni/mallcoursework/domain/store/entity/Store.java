@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Set;
 
@@ -22,6 +23,7 @@ public class Store {
 
     @Column(nullable = false)
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
+    @Length(min = 5, message = Constants.FIELD_AT_LEAST_FIVE_CHARS)
     private String name;
 
     @Column(nullable = false)
@@ -49,4 +51,7 @@ public class Store {
             orphanRemoval = true
     )
     private Set<Product> products;
+
+    @ManyToMany(mappedBy = "favorites")
+    private Set<User> users;
 }

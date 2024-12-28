@@ -37,8 +37,8 @@
             </div>
 
             <div class="d-flex">
-                <button type="submit" th:disabled="${#lists.isEmpty(managers)}" class="btn btn-primary w-50">Create</button>
-                <a th:href="@{/malls/{id}(id=${mallId})}" class="btn btn-outline-danger w-50 ms-2">Cancel</a>
+                <button type="submit" th:disabled="${#lists.isEmpty(managers)}" class="btn btn-success w-50">Create</button>
+                <a th:href="@{/malls/{id}(id=${mallId})}" class="btn btn-outline-secondary w-50 ms-2">Cancel</a>
             </div>
         </form>
     </div>

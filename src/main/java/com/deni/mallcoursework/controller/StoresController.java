@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +28,15 @@ public class StoresController {
         this.productService = productService;
     }
 
+    @PreAuthorize("@storeExpression.worksAtStore()")
+    @GetMapping("/my-store")
+    public String myStore(Model model, Authentication authentication) {
+        var store = storeService.getStoreOfCurrentUser(authentication);
+        model.addAttribute("store", store);
+
+        return "stores/my-store";
+    }
+
     @GetMapping("/{id}")
     public String getById(@PathVariable String id,
                           @RequestParam(name = "page", defaultValue = "0") int pageNum,
@@ -39,6 +49,24 @@ public class StoresController {
             model.addAttribute("page", productsPage);
 
             return "stores/products";
+        } catch (ResourceNotFoundException e) {
+            return "redirect:/error/404";
+        }
+    }
+
+    @PreAuthorize("@storeExpression.isAllowedToCreateEmployee(#id)")
+    @GetMapping("/{id}/employees")
+    public String employees(@PathVariable String id,
+                            @RequestParam(name = "page", defaultValue = "0") int pageNum,
+                            @RequestParam(defaultValue = "10") int size,
+                            Model model) {
+        try {
+            Pageable pageable = PageRequest.of(pageNum, size);
+            var employees = storeService.getEmployeesById(pageable, id);
+            model.addAttribute("employees", employees.getContent());
+            model.addAttribute("page", employees);
+
+            return "stores/employees";
         } catch (ResourceNotFoundException e) {
             return "redirect:/error/404";
         }
@@ -79,7 +107,7 @@ public class StoresController {
         return "redirect:/malls/" + mallId;
     }
 
-    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id)")
+    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id) || @storeExpression.isAllowedToDeleteOrChangeManagerOfStore(null, #id)")
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
@@ -93,7 +121,7 @@ public class StoresController {
         }
     }
 
-    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id)")
+    @PreAuthorize("@storeExpression.isAllowedToUpdateStore(#id) || @storeExpression.isAllowedToDeleteOrChangeManagerOfStore(null, #id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
                          @Valid CreateStoreDto createStoreDto,

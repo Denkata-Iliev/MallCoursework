@@ -4,23 +4,23 @@ import com.deni.mallcoursework.util.Constants;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
 public final class RegisterDto {
         @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-        @Size(min = 3, max = 20)
+        @Length(min = 5, message = Constants.FIELD_AT_LEAST_FIVE_CHARS)
         private String fullname;
 
         @NotBlank(message = Constants.BLANK_FIELD_ERROR)
-        @Size(min = 8, max = 20)
+        @Length(min = 8, message = Constants.PASSWORD_AT_LEAST_EIGHT_CHARS)
         private String password;
 
         @Email(message = Constants.EMAIL_ERROR)
-        @Size(min = 3, max = 20)
+        @Length(min = 5, message = Constants.FIELD_AT_LEAST_FIVE_CHARS)
         private String email;
 
         @NotBlank(message = Constants.BLANK_FIELD_ERROR)

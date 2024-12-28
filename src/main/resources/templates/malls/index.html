@@ -9,19 +9,26 @@
 <body>
 <nav th:replace="~{base :: navbar}"></nav>
 
-<div th:if="${#lists.isEmpty(malls)}">
-    <h1>Nothing to see here!</h1>
-    <a th:href="@{/malls/create}"
-       class="btn btn-primary"
-       sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
-</div>
-
-<div class="container" th:if="${!#lists.isEmpty(malls)}">
-    <h1>All Malls</h1>
+<div class="container mt-5" th:if="${#lists.isEmpty(malls)}">
+    <h1 class="text-center mb-4">There are no malls in the system yet!</h1>
 
     <a th:href="@{/malls/create}"
        class="btn btn-primary mb-3 mt-3"
        sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
+</div>
+
+<div class="container mt-4" th:if="${!#lists.isEmpty(malls)}">
+    <h1 class="text-center mb-4">All Malls</h1>
+
+    <div class="d-flex">
+        <a th:href="@{/malls/create}"
+           class="btn btn-primary mb-3 mt-3"
+           sec:authorize="hasRole('ROLE_ADMIN')">Create Mall</a>
+
+        <a th:href="@{/users/create(role='MALL_OWNER', returnUrl='malls')}"
+           class="btn btn-primary mb-3 mt-3 ms-auto"
+           sec:authorize="hasRole('ROLE_ADMIN')">Create Mall Owner</a>
+    </div>
 
     <ul class="list">
         <li class="item" th:each="mall : ${malls}">

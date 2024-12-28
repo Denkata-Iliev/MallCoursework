@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +35,7 @@ public class MallServiceImpl implements MallService {
     public void createMall(CreateMallDto createMallDto) {
         var mall = mallMapper.fromCreateDto(createMallDto);
 
-        var mallOwner = userService.getUserById(createMallDto.getOwnerId());
+        var mallOwner = userService.getEntityById(createMallDto.getOwnerId());
         mall.setOwner(mallOwner);
 
         mallRepository.save(mall);
@@ -43,6 +44,14 @@ public class MallServiceImpl implements MallService {
     @Override
     public Page<DisplayMallDto> getAll(Pageable pageable) {
         return mallRepository.findAll(pageable)
+                .map(mallMapper::toDisplayMallDto);
+    }
+
+    @Override
+    public Page<DisplayMallDto> getMallsOfCurrentUser(Authentication authentication, Pageable pageable) {
+        var currentUserEntity = userService.getCurrentUserEntity(authentication);
+
+        return mallRepository.findAllByOwnerId(currentUserEntity.getId(), pageable)
                 .map(mallMapper::toDisplayMallDto);
     }
 
@@ -75,7 +84,7 @@ public class MallServiceImpl implements MallService {
         String currentOwnerId = mall.getOwner().getId();
         String newOwnerId = createMallDto.getOwnerId();
         if (!currentOwnerId.equals(newOwnerId)) {
-            var owner = userService.getUserById(newOwnerId);
+            var owner = userService.getEntityById(newOwnerId);
             mall.setOwner(owner);
         }
 

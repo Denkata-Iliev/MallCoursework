@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 @Setter
 public final class CreateProductDto {
     @NotBlank(message = Constants.BLANK_FIELD_ERROR)
+    @Length(min = 5, message = Constants.FIELD_AT_LEAST_FIVE_CHARS)
     private String name;
 
     @NotNull(message = Constants.BLANK_FIELD_ERROR)

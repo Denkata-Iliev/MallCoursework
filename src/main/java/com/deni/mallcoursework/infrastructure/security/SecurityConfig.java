@@ -21,7 +21,8 @@ public class SecurityConfig {
     private static final String KEY = "myKey";
     private static final String[] ALLOW_ALL_LIST = {
             "/", "/css/**", "/js/**", "/bootstrap/css/**", "/bootstrap/js/**", "/images/**",
-            "/stores", "stores/{id}", "stores/details/{id}", "/products/{id}"
+            "stores/{id}", "stores/details/{id}", "/products/{id}",
+            "/malls", "/malls/{id}", "/malls/details/{id}"
     };
 
     private final RememberMeServices rememberMeServices;
@@ -46,7 +47,7 @@ public class SecurityConfig {
                 })
                 .logout(configurer -> {
                     configurer.logoutUrl("/logout");
-                    configurer.logoutSuccessUrl("/login");
+                    configurer.logoutSuccessUrl("/");
                     configurer.clearAuthentication(true);
                     configurer.invalidateHttpSession(true);
                 })

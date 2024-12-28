@@ -22,8 +22,20 @@
                     <a class="nav-link fs-3" href="/malls">Malls</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link fs-3" href="/stores">Stores</a>
+                <li class="nav-item" th:if="${@storeExpression.worksAtStore()}">
+                    <a class="nav-link fs-3" href="/stores/my-store">My Store</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasRole('ROLE_MALL_OWNER')">
+                    <a class="nav-link fs-3" href="/malls/my-malls">My Malls</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasRole('ROLE_CLIENT')">
+                    <a class="nav-link fs-3" href="/users/favorites">Favorites</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="nav-link fs-3" href="/users">Users</a>
                 </li>
             </ul>
         </div>
@@ -40,7 +52,7 @@
                             th:text="${#authentication.name}"></button>
 
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                        <li><a class="dropdown-item" href="/users/profile">Profile</a></li>
 
                         <li>
                             <form th:action="@{/logout}" method="post">

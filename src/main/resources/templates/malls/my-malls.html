@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
+    <title>Malls</title>
+    <link rel="stylesheet" href="/css/list-index.css" />
+    <link rel="stylesheet" href="/css/pagination.css" />
+</head>
+<body>
+<nav th:replace="~{base :: navbar}"></nav>
+
+<div th:if="${#lists.isEmpty(malls)}">
+    <h1>You don't have any malls yet!</h1>
+</div>
+
+<div class="container" th:if="${!#lists.isEmpty(malls)}">
+    <h1>My Malls</h1>
+
+    <ul class="list">
+        <li class="item" th:each="mall : ${malls}">
+            <div class="item-details">
+                <span class="item-name" th:text="${mall.name}">Mall Name</span>
+                <span class="item-secondary-text" th:text="'Address: ' + ${mall.address}">Address</span>
+                <span class="item-secondary-text" th:text="'Stores: ' + ${mall.storeCount}">Store Count</span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a th:href="@{/malls/{id}(id=${mall.id})}" class="btn btn-primary">View Stores</a>
+                <a th:href="@{/malls/details/{id}(id=${mall.id})}" class="btn btn-outline-primary">Details</a>
+
+                <a th:if="${@mallExpression.isAllowedToModifyMall(mall.id)}"
+                   th:href="@{/malls/update/{id}(id=${mall.id})}"
+                   class="btn btn-outline-success">Update</a>
+
+                <form th:if="${@mallExpression.isAllowedToModifyMall(mall.id)}"
+                      th:action="@{/malls/delete/{id}(id=${mall.id})}"
+                      method="post"
+                      onsubmit="return confirmDeletion('mall')"
+                >
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div th:replace="~{ base :: pagination('/malls/my-malls', ${page})}"></div>
+
+<th:block th:replace="~{base :: scripts}"></th:block>
+<script src="/js/confirmDeletion.js"></script>
+</body>
+</html>

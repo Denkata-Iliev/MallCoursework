@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
+    <title>Users</title>
+    <link rel="stylesheet" href="/css/list-index.css" />
+    <link rel="stylesheet" href="/css/pagination.css" />
+</head>
+<body>
+<nav th:replace="~{base :: navbar}"></nav>
+
+<div class="container">
+    <h1>Users</h1>
+    <h3 class="text-danger text-center" th:if="${error}" th:text="${error}"></h3>
+    <h3 class="text-primary text-center" th:if="${#lists.isEmpty(users)}">No matches with current filter!</h3>
+
+    <form th:action="@{/users}" class="mb-3 d-flex align-items-center gap-2" th:object="${searchUserDto}">
+        <!-- Search Field -->
+        <input type="text"
+               class="form-control"
+               placeholder="Search..."
+               th:field="*{searchText}"
+               aria-label="search input">
+
+        <!-- Dropdown for Checkboxes -->
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="searchFieldsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Fields
+            </button>
+
+            <ul class="dropdown-menu p-2" aria-labelledby="searchFieldsDropdown">
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="fullname" id="searchByFullname" name="fields"
+                               th:checked="${searchUserDto.fields.contains('fullname')}">
+                        <label class="form-check-label" for="searchByFullname">Full Name</label>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="email" id="searchByEmail" name="fields"
+                               th:checked="${searchUserDto.fields.contains('email')}">
+                        <label class="form-check-label" for="searchByEmail">Email</label>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="phone" id="searchByPhone" name="fields"
+                               th:checked="${searchUserDto.fields.contains('phone')}">
+                        <label class="form-check-label" for="searchByPhone">Phone</label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Dropdown for Roles -->
+        <select class="form-select" name="role" id="searchRole" aria-label="role select" th:field="*{role}">
+            <option value="" th:selected="${searchUserDto.role == null}">All Roles</option>
+            <option th:each="role : ${roles}"
+                    th:value="${role.name()}"
+                    th:selected="${searchUserDto.role != null && searchUserDto.role.name().equals(role.name())}"
+                    th:text="${role.name()}"></option>
+        </select>
+
+        <!-- Search Button -->
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a th:href="@{/users}" class="btn btn-danger">Reset</a>
+    </form>
+
+    <!-- User List -->
+    <ul class="list" th:if="${!#lists.isEmpty(users)}">
+        <li class="item" th:each="user : ${users}" th:if="${!user.id.equals(currentUser.id)}">
+            <div class="d-flex">
+
+                <img th:src="@{https://ui-avatars.com/api(rounded=true, size=70, format='png', name=${user.fullname})}"
+                     alt="profile picture"
+                     class="align-self-center me-2">
+
+                <div class="d-flex flex-column">
+                    <span class="item-name" th:text="${user.fullname}">Full Name</span>
+                    <span class="item-secondary-text" th:text="'Email: ' + ${user.email}">Email</span>
+                    <span class="item-secondary-text" th:text="'Phone: ' + ${user.phone}">Phone Number</span>
+                    <span class="item-secondary-text" th:text="'Role: ' + ${user.role.name}">Role</span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <form th:action="@{/users/delete/{id}(id=${user.id})}"
+                      method="post"
+                      onsubmit="return confirmDeletion('user')"
+                >
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<nav th:replace="~{ base :: pagination(@{/users}, ${page})}"></nav>
+
+<th:block th:replace="~{base :: scripts}"></th:block>
+<script src="/js/confirmDeletion.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body>
+<nav th:replace="~{ base :: navbar }"></nav>
+
+<!-- Profile -->
+<div class="container profile-container">
+    <div class="card text-center d-flex align-items-center">
+
+        <img th:src="@{https://ui-avatars.com/api(rounded=true, size=256, format='png', name=${user.fullname})}"
+             alt="Profile Picture"
+             class="profile-picture mb-3"
+             id="profilePicture">
+
+        <h3 id="fullName" th:text="${user.fullname}"></h3>
+        <p class="text-muted mb-1"><strong>Email:</strong> <span id="email" th:text="${user.email}"></span></p>
+        <p class="text-muted mb-3"><strong>Phone:</strong> <span id="phone" th:text="${user.phone}"></span></p>
+
+        <div class="d-flex gap-2">
+            <button th:class="'btn btn-primary ' + ${(updateFormOpen or changePassFormOpen) ? 'd-none' : ''}" id="editProfileBtn">Update Profile</button>
+            <button th:class="'btn btn-success ' + ${(updateFormOpen or changePassFormOpen) ? 'd-none' : ''}" id="changePassBtn">Change Password</button>
+        </div>
+    </div>
+
+    <!-- Update Profile form -->
+    <div th:class="'card mt-4 ' + ${updateFormOpen ? '' : 'hidden-form'}" id="profileFormContainer">
+        <h4 class="text-center mb-3">Edit Profile</h4>
+        <form id="profileForm"
+              th:action="@{/users/update/{id}(id=${user.id})}"
+              th:object="${updateUserDto}"
+              method="post">
+
+            <div class="mb-3">
+                <label for="fullNameInput" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="fullNameInput" th:field="*{fullname}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="emailInput" class="form-label">Email</label>
+                <input type="email" class="form-control" id="emailInput" th:field="*{email}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="phoneInput" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="phoneInput" th:field="*{phone}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3">
+                <button type="submit" class="btn btn-success">Save Changes</button>
+                <button type="button" class="btn btn-outline-secondary" id="cancelUpdateBtn">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Change Password Form -->
+    <div th:class="'card mt-4 ' + ${changePassFormOpen ? '' : 'hidden-form'}" id="changePassFormContainer">
+        <h4 class="text-center mb-3">Change Password</h4>
+        <form id="changePassForm"
+              th:action="@{/users/change-password/{id}(id=${user.id})}"
+              th:object="${changePassDto}"
+              method="post">
+
+            <div class="mb-3">
+                <label for="oldPassInput" class="form-label">Old Password</label>
+                <input type="password" class="form-control" id="oldPassInput" th:field="*{oldPass}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('oldPass')}" th:errors="*{oldPass}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="newPassInput" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="newPassInput" th:field="*{newPass}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('newPass')}" th:errors="*{newPass}"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmNewPassInput" class="form-label">Confirm New Password</label>
+                <input type="password" class="form-control" id="confirmNewPassInput" th:field="*{confNewPass}" required>
+                <span class="text-danger" th:if="${#fields.hasErrors('confNewPass')}" th:errors="*{confNewPass}"></span>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3">
+                <button type="submit" class="btn btn-success">Save Changes</button>
+                <button type="button" class="btn btn-outline-secondary" id="cancelChangePassBtn">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block th:replace="~{ base :: scripts}"></th:block>
+
+<!-- JavaScript for Form Activation -->
+<script src="/js/profile.js" defer></script>
+
+</body>
+</html>

@@ -1,39 +1,73 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{base :: base_head(~{::title}, ~{::link})}">
     <title>Stores</title>
     <link rel="stylesheet" href="/css/list-index.css" />
     <link rel="stylesheet" href="/css/pagination.css" />
+    <link rel="stylesheet" href="/css/notification-box.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
 <nav th:replace="~{base :: navbar}"></nav>
 
-<div th:if="${#lists.isEmpty(stores)}">
-    <h1>Nothing to see here!</h1>
-    <a th:href="@{/stores/create/{id}(id=${id})}"
-       class="btn btn-primary"
-       th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
+<div class="container mt-5" th:if="${#lists.isEmpty(stores)}">
+    <h1 class="text-center mb-4">There are no stores in this mall yet!</h1>
+
+    <div class="d-flex">
+        <a th:href="@{/stores/create/{id}(id=${id})}"
+           class="btn btn-primary mb-3 mt-3"
+           th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
+
+        <a th:href="@{/users/create(role='MANAGER', returnUrl='malls/' + ${id})}"
+           class="btn btn-primary mb-3 mt-3 ms-auto"
+           th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Manager</a>
+    </div>
 </div>
 
-<div class="container" th:if="${!#lists.isEmpty(stores)}">
-    <h1>Our Stores</h1>
+<div class="container mt-5" th:if="${!#lists.isEmpty(stores)}">
+    <h1 class="text-center mb-4">Our Stores</h1>
 
-    <a th:href="@{/stores/create/{id}(id=${id})}"
-       class="btn btn-primary mb-3 mt-3"
-       th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
+    <!-- Notification Box -->
+    <div id="notification" class="notification-box"></div>
+
+    <div class="d-flex">
+        <a th:href="@{/stores/create/{id}(id=${id})}"
+           class="btn btn-primary mb-3 mt-3"
+           th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Store</a>
+
+        <a th:href="@{/users/create(role='MANAGER', returnUrl='malls/' + ${id})}"
+           class="btn btn-primary mb-3 mt-3 ms-auto"
+           th:if="${@storeExpression.isAllowedToCreateStore(id)}">Create Manager</a>
+    </div>
 
     <ul class="list">
         <li class="item" th:each="store : ${stores}">
-            <div class="item-details">
-                <span class="item-name" th:text="${store.name}">Store Name</span>
-                <span class="item-secondary-text" th:text="'Floor: ' + ${store.floorNumber}">Floor Number</span>
+            <div class="d-flex">
+
+                <!-- when user is not logged in, always show default heart -->
+                <i class="fa-regular fa-heart fa-xl align-self-center me-3" sec:authorize="hasRole('ROLE_ANONYMOUS')"></i>
+
+                <!-- CSRF token data so I can make requests through JS -->
+                <div id="csrf-data" th:data-token="${_csrf.token}" th:data-header="${_csrf.headerName}" class="d-none"></div>
+
+                <!-- when user is logged in, show hear depending on their favorites -->
+                <i class="fa-heart fa-xl align-self-center me-3 add-fave"
+                   th:if="${userFavorites}"
+                   th:classappend="${#lists.contains(userFavorites, store.id) ? 'fa-solid text-danger' : 'fa-regular'}"
+                   th:data-store-id="${store.id}"></i>
+
+                <div class="d-flex flex-column">
+                    <span class="item-name" th:text="${store.name}">Store Name</span>
+                    <span class="item-secondary-text" th:text="'Floor: ' + ${store.floorNumber}">Floor Number</span>
+                </div>
             </div>
 
             <div class="d-flex gap-2">
                 <a th:href="@{/stores/{id}(id=${store.id})}" class="btn btn-primary">View Products</a>
                 <a th:href="@{/stores/details/{id}(id=${store.id})}" class="btn btn-outline-primary">Details</a>
 
-                <a th:if="${@storeExpression.isAllowedToUpdateStore(store.id)}"
+                <a th:if="${@storeExpression.isAllowedToUpdateStore(store.id) || @storeExpression.isAllowedToDeleteOrChangeManagerOfStore(id, store.id)}"
                    th:href="@{/stores/update/{id}(id=${store.id})}"
                    class="btn btn-outline-success">Update</a>
 
@@ -52,6 +86,7 @@
 <nav th:replace="~{ base :: pagination(@{/malls/{id}(id=${id})}, ${page})}"></nav>
 
 <th:block th:replace="~{base :: scripts}"></th:block>
-<script src="/js/confirmDeletion.js"></script>
+<script src="/js/confirmDeletion.js" defer></script>
+<script src="/js/favorite.js" defer></script>
 </body>
 </html>

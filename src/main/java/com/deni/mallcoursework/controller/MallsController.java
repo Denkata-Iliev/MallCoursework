@@ -2,6 +2,7 @@ package com.deni.mallcoursework.controller;
 
 import com.deni.mallcoursework.domain.mall.dto.CreateMallDto;
 import com.deni.mallcoursework.domain.mall.service.MallService;
+import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.domain.store.service.StoreService;
 import com.deni.mallcoursework.domain.user.service.UserService;
 import com.deni.mallcoursework.infrastructure.exception.ResourceNotFoundException;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +30,21 @@ public class MallsController {
         this.mallService = mallService;
         this.userService = userService;
         this.storeService = storeService;
+    }
+
+    @PreAuthorize("hasRole('ROLE_MALL_OWNER')")
+    @GetMapping("/my-malls")
+    public String myMalls(@RequestParam(name = "page", defaultValue = "0") int pageNum,
+                          @RequestParam(defaultValue = "5") int size,
+                          Model model,
+                          Authentication authentication) {
+        Pageable pageable = PageRequest.of(pageNum, size);
+        var mallsPage = mallService.getMallsOfCurrentUser(authentication, pageable);
+
+        model.addAttribute("malls", mallsPage.getContent());
+        model.addAttribute("page", mallsPage);
+
+        return "malls/my-malls";
     }
 
     @GetMapping
@@ -55,6 +72,7 @@ public class MallsController {
     public String create(@Valid CreateMallDto createMallDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("createMallDto", createMallDto);
+            model.addAttribute("mallOwners", userService.getAllMallOwners());
             return "malls/create";
         }
 
@@ -66,9 +84,20 @@ public class MallsController {
     public String stores(@PathVariable String id,
                          @RequestParam(name = "page", defaultValue = "0") int pageNum,
                          @RequestParam(defaultValue = "5") int size,
-                         Model model) {
+                         Model model,
+                         Authentication authentication) {
         Pageable pageable = PageRequest.of(pageNum, size);
         var page = storeService.getAll(pageable, id);
+
+        if (authentication != null) {
+            var user = userService.getCurrentUserEntity(authentication);
+            var userFavorites = user.getFavorites()
+                    .stream()
+                    .map(Store::getId)
+                    .toList();
+
+            model.addAttribute("userFavorites", userFavorites);
+        }
 
         model.addAttribute("stores", page.getContent());
         model.addAttribute("page", page);

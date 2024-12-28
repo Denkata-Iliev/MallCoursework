@@ -1,4 +1,4 @@
-package com.deni.mallcoursework.infrastructure.security.expressions;
+package com.deni.mallcoursework.infrastructure.security.expression;
 
 import com.deni.mallcoursework.domain.user.entity.User;
 import com.deni.mallcoursework.domain.user.service.UserService;
@@ -23,7 +23,7 @@ public class BaseExpression {
     public User getUser(Authentication authentication) {
         var mallUserDetails = (MallUserDetails) authentication.getPrincipal();
 
-        return userService.getUserById(mallUserDetails.getId());
+        return userService.getEntityById(mallUserDetails.getId());
     }
 
     public Authentication getAuthentication() {
