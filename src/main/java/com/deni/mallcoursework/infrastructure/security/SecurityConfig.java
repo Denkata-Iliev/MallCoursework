@@ -47,7 +47,7 @@ public class SecurityConfig {
                 })
                 .logout(configurer -> {
                     configurer.logoutUrl("/logout");
-                    configurer.logoutSuccessUrl("/login");
+                    configurer.logoutSuccessUrl("/");
                     configurer.clearAuthentication(true);
                     configurer.invalidateHttpSession(true);
                 })
