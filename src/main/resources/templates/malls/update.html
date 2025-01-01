@@ -39,7 +39,7 @@
                 <label class="form-label" for="manager">Select Owner:</label>
                 <select class="form-select" id="manager" th:field="*{ownerId}" required>
                     <option th:each="owner : ${mallOwners}"
-                            th:selected="${owner.id.equals(createMallDto.ownerId)}"
+                            th:selected="${owner.id.equals(updateMallDto.ownerId)}"
                             th:value="${owner.id}"
                             th:text="${owner.fullname} + ' (' + ${owner.email} + ')'">
                     </option>
