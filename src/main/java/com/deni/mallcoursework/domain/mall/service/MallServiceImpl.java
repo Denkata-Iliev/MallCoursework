@@ -3,6 +3,7 @@ package com.deni.mallcoursework.domain.mall.service;
 import com.deni.mallcoursework.domain.mall.dto.CreateMallDto;
 import com.deni.mallcoursework.domain.mall.dto.DetailsMallDto;
 import com.deni.mallcoursework.domain.mall.dto.DisplayMallDto;
+import com.deni.mallcoursework.domain.mall.dto.UpdateMallDto;
 import com.deni.mallcoursework.domain.mall.entity.Mall;
 import com.deni.mallcoursework.domain.mall.mapper.MallMapper;
 import com.deni.mallcoursework.domain.mall.repository.MallRepository;
@@ -69,20 +70,25 @@ public class MallServiceImpl implements MallService {
     }
 
     @Override
-    public CreateMallDto getCreateDtoById(String id) {
+    public UpdateMallDto getUpdateDtoById(String id) {
         var mall = getEntityById(id);
 
-        return mallMapper.toCreateMallDto(mall);
+        return mallMapper.toUpdateMallDto(mall);
     }
 
     @Override
-    public void update(CreateMallDto createMallDto, String id) {
+    public void update(UpdateMallDto updateMallDto, String id) {
         var mall = getEntityById(id);
 
-        mallMapper.update(createMallDto, mall);
+        mallMapper.update(updateMallDto, mall);
+
+        if (updateMallDto.getOwnerId() == null) {
+            mallRepository.save(mall);
+            return;
+        }
 
         String currentOwnerId = mall.getOwner().getId();
-        String newOwnerId = createMallDto.getOwnerId();
+        String newOwnerId = updateMallDto.getOwnerId();
         if (!currentOwnerId.equals(newOwnerId)) {
             var owner = userService.getEntityById(newOwnerId);
             mall.setOwner(owner);

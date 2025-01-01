@@ -3,6 +3,7 @@ package com.deni.mallcoursework.domain.mall.service;
 import com.deni.mallcoursework.domain.mall.dto.CreateMallDto;
 import com.deni.mallcoursework.domain.mall.dto.DetailsMallDto;
 import com.deni.mallcoursework.domain.mall.dto.DisplayMallDto;
+import com.deni.mallcoursework.domain.mall.dto.UpdateMallDto;
 import com.deni.mallcoursework.domain.mall.entity.Mall;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -20,9 +21,9 @@ public interface MallService {
 
     DetailsMallDto getDetailsById(String id);
 
-    CreateMallDto getCreateDtoById(String id);
+    UpdateMallDto getUpdateDtoById(String id);
 
-    void update(CreateMallDto createMallDto, String id);
+    void update(UpdateMallDto updateMallDto, String id);
 
     @Transactional
     void delete(String id);

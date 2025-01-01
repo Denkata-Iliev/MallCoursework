@@ -1,6 +1,7 @@
 package com.deni.mallcoursework.controller;
 
 import com.deni.mallcoursework.domain.mall.dto.CreateMallDto;
+import com.deni.mallcoursework.domain.mall.dto.UpdateMallDto;
 import com.deni.mallcoursework.domain.mall.service.MallService;
 import com.deni.mallcoursework.domain.store.entity.Store;
 import com.deni.mallcoursework.domain.store.service.StoreService;
@@ -119,10 +120,10 @@ public class MallsController {
     @GetMapping("/update/{id}")
     public String update(@PathVariable String id, Model model) {
         try {
-            var createMallDto = mallService.getCreateDtoById(id);
+            var updateMallDto = mallService.getUpdateDtoById(id);
             var mallOwners = userService.getAllMallOwners();
 
-            model.addAttribute("createMallDto", createMallDto);
+            model.addAttribute("updateMallDto", updateMallDto);
             model.addAttribute("mallOwners", mallOwners);
 
             return "malls/update";
@@ -134,16 +135,16 @@ public class MallsController {
     @PreAuthorize("@mallExpression.isAllowedToModifyMall(#id)")
     @PostMapping("/update/{id}")
     public String update(@PathVariable String id,
-                         @Valid CreateMallDto createMallDto,
+                         @Valid UpdateMallDto updateMallDto,
                          BindingResult bindingResult,
                          Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("createMallDto", createMallDto);
+            model.addAttribute("updateMallDto", updateMallDto);
             return "malls/update";
         }
 
         try {
-            mallService.update(createMallDto, id);
+            mallService.update(updateMallDto, id);
 
             return "redirect:/malls";
         } catch (ResourceNotFoundException e) {

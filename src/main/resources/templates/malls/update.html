@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{ base :: base_head(~{::title}, ~{::link}) }">
     <title>Update Mall</title>
     <link rel="stylesheet" href="/css/center-card.css">
@@ -9,7 +10,7 @@
     <div class="card">
         <h2 class="text-center mb-4">Update Mall</h2>
 
-        <form th:action="@{/malls/update/{id}(id=${id})}" method="post" th:object="${createMallDto}">
+        <form th:action="@{/malls/update/{id}(id=${id})}" method="post" th:object="${updateMallDto}">
             <div class="mb-3">
                 <label class="form-label" for="name">Mall Name:</label>
                 <input class="form-control" type="text" id="name" th:field="*{name}" required>
